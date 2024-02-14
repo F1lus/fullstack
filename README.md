@@ -13,3 +13,4 @@
 ## Used Technologies
 - Next.js
 - Tailwind
+- Mongodb
