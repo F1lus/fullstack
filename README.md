@@ -1,4 +1,5 @@
 # Full Stack web development project
+This application is being developed for a university course called Full Stack web development @ ELTE
 
 ## Development guidelines
 - The **app** folder should be where the routes are defined
@@ -13,4 +14,5 @@
 ## Used Technologies
 - Next.js
 - Tailwind
-- Mongodb
+- PostgreSQL
+- SQLite
