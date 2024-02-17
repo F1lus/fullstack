@@ -5,10 +5,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+//Dev
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.sqlite"
 }
+
 //Prod
 //datasource db {
 //  provider  = "postgresql"
@@ -19,4 +21,51 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   name String @unique
+  displayName String
+  email String @unique
+  description String?
+  profilePicturePath String
+  password String
+  createdAt DateTime @default(now())
+  modifiedAt DateTime?
+
+  //Relation
+  tweets Tweet[] @relation("TweetOwner")
+  comments Comment[] @relation("UserComments")
+
+  likedTweets Tweet[] @relation("LikedTweets")
+  likedComments Comment[] @relation("LikedComments")
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  text String
+  createdAt DateTime @default(now())
+  modifiedAt DateTime?
+
+  userId Int @unique
+  tweetId Int @unique
+
+  //Relations
+  Owner User @relation("UserComments", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Tweet Tweet @relation("TweetComments", fields: [tweetId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  likes User[] @relation("LikedComments")
+}
+
+model Tweet {
+  id Int @id @default(autoincrement())
+  description String
+  retweets Int @default(0)
+  isRetweet Boolean @default(false)
+  createdAt DateTime @default(now())
+  modifiedAt DateTime?
+
+  userId Int @unique
+
+  //Relations
+  Owner User @relation("TweetOwner", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  comments Comment[] @relation("TweetComments")
+  likes User[] @relation("LikedTweets")
 }
