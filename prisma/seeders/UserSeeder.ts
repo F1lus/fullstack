@@ -7,6 +7,7 @@ export async function UserSeeder(prisma: PrismaClient) {
             name: faker.internet.userName(),
             displayName: faker.internet.displayName(),
             email: faker.internet.email(),
+            role: faker.helpers.arrayElement([ 'common', 'common', 'common', 'admin' ]),
             description: faker.helpers.arrayElement([ faker.commerce.productDescription(), null ]),
             profilePicturePath: '/profile_ph.webp',
             password: faker.internet.password()

@@ -26,8 +26,6 @@ async function seed() {
                     }
                 }
             })
-
-            console.log(a)
         }
 
         if(shouldLikeComment) {
@@ -45,8 +43,6 @@ async function seed() {
                 }
             })
         }
-
-        
     }
 }
 
