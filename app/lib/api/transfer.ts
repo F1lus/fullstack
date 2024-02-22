@@ -1,13 +1,13 @@
-'use client'
+'use server'
 
-import { cookies } from "next/headers"
-import { HTTPMethod } from "../definitions"
+import {cookies} from "next/headers"
+import {ContentType, HTTPMethod} from "../definitions"
 
 function getOrigin() {
     const isProduction = process.env['NODE_ENV'] === 'production'
     const isServer = typeof window === 'undefined'
 
-    if(isProduction) {
+    if (isProduction) {
         return isServer ? process.env['VERCEL_URL'] : window.location.origin
     }
 
@@ -16,11 +16,12 @@ function getOrigin() {
 
 /**
  * An improved fetch
- * 
+ *
  * @param path
+ * @param contentType
  * @returns a guaranteed JSON structure which you can even narrow down
  */
-export function Transfer(path: string) {
+export async function Transfer(path: string, contentType: ContentType = 'application/json') {
     const pathSeparator = path.startsWith('/') ? '' : '/'
     const localPath: string = `${getOrigin()}/api${pathSeparator}${path}`
 
@@ -32,8 +33,7 @@ export function Transfer(path: string) {
         cache: "no-cache",
         credentials: "same-origin",
         headers: {
-          "Content-Type": "application/json",
-          "Cookie": cookieHeaderFormat
+            'Content-Type': contentType,
         },
         redirect: "follow",
         referrerPolicy: "no-referrer"
@@ -41,7 +41,7 @@ export function Transfer(path: string) {
 
     async function sendRequest(method: HTTPMethod, data: object = {}) {
         init.method = method
-        if(method !== 'GET') {
+        if (method !== 'GET') {
             init.body = JSON.stringify(data)
         }
 
