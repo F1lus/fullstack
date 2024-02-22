@@ -19,12 +19,13 @@ datasource db {
 //}
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String @unique
   displayName String
   email String @unique
+  role String @default("common")
   description String?
-  profilePicturePath String
+  profilePicturePath String @default("/profile_ph.webp")
   password String
   createdAt DateTime @default(now())
   modifiedAt DateTime?
@@ -35,16 +36,18 @@ model User {
 
   likedTweets Tweet[] @relation("LikedTweets")
   likedComments Comment[] @relation("LikedComments")
+
+  session Session? @relation("AuthSession")
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   text String
   createdAt DateTime @default(now())
   modifiedAt DateTime?
 
-  userId Int @unique
-  tweetId Int @unique
+  userId String @unique
+  tweetId String @unique
 
   //Relations
   Owner User @relation("UserComments", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -54,18 +57,27 @@ model Comment {
 }
 
 model Tweet {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   description String
   retweets Int @default(0)
   isRetweet Boolean @default(false)
   createdAt DateTime @default(now())
   modifiedAt DateTime?
 
-  userId Int @unique
+  userId String @unique
 
   //Relations
   Owner User @relation("TweetOwner", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   comments Comment[] @relation("TweetComments")
   likes User[] @relation("LikedTweets")
+}
+
+model Session {
+  id String @id @default(uuid())
+  userId String @unique
+  
+  token String @unique @default(uuid())
+
+  user User @relation("AuthSession", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
