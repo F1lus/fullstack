@@ -1,8 +1,11 @@
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS'
+export type ContentType =
+    'application/json'
+    | 'multipart/form-data'
 
 //#region Validator
 export type Validator = {
-    [key: string]: { 
+    [key: string]: {
         errorMessage: string,
         validator: RegExp
     }
