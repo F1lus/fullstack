@@ -1,9 +1,14 @@
-import { JSONResponse } from "@/app/lib/api/JSONResponse"
-import { isAuthorizationHeaderValid } from "@/app/lib/auth/SessionHandler"
+import {Reply} from "@/app/lib/api/Reply"
+import {isAuthorizationHeaderValid} from "@/app/lib/util/SessionHandler"
+import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(_: Request) {
-    const isLoggedIn = await isAuthorizationHeaderValid()
-    return JSONResponse.status(isLoggedIn ? 200 : 401).send()
+    try {
+        const isLoggedIn = await isAuthorizationHeaderValid()
+        return Reply.withStatus(isLoggedIn ? 200 : 401).send()
+    } catch (error) {
+        return ErrorHandler(error)
+    }
 }

@@ -2,26 +2,16 @@
 
 import Image from "next/image"
 import {Button, Input} from "@nextui-org/react";
-import axios from "axios";
+import {Query} from "@/app/lib/api/Query";
 
 export default function LoginPage() {
 
-    const handleSubmit = (formData: FormData) => {
-
-        axios.post(`/api/auth/login`, formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    sessionStorage.setItem('token', res.data.token)
-                }
-            })
-            .catch((error) => {
-                console.log("Error: ", error)
-            })
+    const handleSubmit = async (formData: FormData) => {
+        const query = new Query('/auth/login')
+        const response = await query.withMethod('POST')
+            .withBody(formData)
+            .send<{token: string}>()
+        console.log(response.data)
     }
 
 

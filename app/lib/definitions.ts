@@ -1,4 +1,6 @@
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS'
+export const AUTHORIZATION = 'Authorization'
+
 export type ContentType =
     'application/json'
     | 'multipart/form-data'
@@ -30,11 +32,6 @@ export const LoginForm = Object.freeze({
     }
 } satisfies Validator)
 
-export type LoginFormError = {
-    email?: string,
-    password?: string
-}
-
 //#endregion Login
 
 //#region Register
@@ -65,15 +62,6 @@ export const RegisterForm = Object.freeze({
         validator: /^on$/
     }
 } satisfies Validator)
-
-export type RegisterFormError = {
-    email?: string,
-    username?: string,
-    displayName?: string,
-    password?: string,
-    passwordRepeat?: string,
-    termsAccepted?: string
-}
 
 //#endregion Register
 

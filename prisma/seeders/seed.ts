@@ -6,6 +6,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 const RANDOM_CHANCE = 0.25
 
+/**
+ * Database seeder entry point
+ * 
+ * A seeder will only execute when it is called within this function
+ */
 async function seed() {
     for (const _ of Array(5)) {
         const user = await UserSeeder(prisma)
@@ -16,7 +21,7 @@ async function seed() {
         const shouldLikeComment = Math.random() < RANDOM_CHANCE
 
         if(shouldLikeTweet) {
-            const a = await prisma.user.update({
+            await prisma.user.update({
                 where: { id: user.id },
                 data: {
                     likedTweets: {
