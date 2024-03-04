@@ -1,31 +1,21 @@
 'use server'
 
-import { cookies } from "next/headers"
+import {headers} from "next/headers"
 import { decryptToken } from "../token/JWT"
 import { deleteUserSession, getUserSession } from "./authDbManager"
 import { SessionCookie } from "../definitions"
 
-const SESSION_COOKIE = 'session'
-
-export async function createSessionCookie(token: string) {
-    cookies().set(SESSION_COOKIE, token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24,
-        path: '/'
-    })
-}
-
 async function destroySession(userId: string) {
-    deleteUserSession(userId)
-    cookies().delete(SESSION_COOKIE)
+    await deleteUserSession(userId)
 }
 
-export async function isCookieSessionValid() {
-    const token = cookies().get(SESSION_COOKIE)?.value
-    if(!token) {
+export async function isAuthorizationHeaderValid() {
+    const bearerToken = headers().get('Authorization')
+    if(!bearerToken) {
         return false
     }
+
+    const token = bearerToken.split(' ')[1]
     
     const decryptedToken = await decryptToken<SessionCookie>(token)
     if(!decryptedToken) {
@@ -39,7 +29,7 @@ export async function isCookieSessionValid() {
             return false
         }
         
-        return !!decryptToken(user.session.token)
+        return !!(await decryptToken(user.session.token))
     } catch {
         await destroySession(id)
         return false

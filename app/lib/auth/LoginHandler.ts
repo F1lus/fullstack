@@ -5,7 +5,6 @@ import {createUserSession, deleteUserSession, findUserByLogin} from "@/app/lib/a
 import {createToken, decryptToken} from "@/app/lib/token/JWT"
 import {FormHandler} from "../util/FormHandler"
 import {LoginForm, LoginFormError} from "../definitions"
-import {createSessionCookie} from "./SessionHandler"
 
 export async function loginHandler(request: Request) {
     let formData
@@ -35,8 +34,9 @@ export async function loginHandler(request: Request) {
         const user = await findUserByLogin(email, password)
         if (user.session) {
             if (await decryptToken(user.session.token)) {
-                await createSessionCookie(user.session.token)
-                return JSONResponse.status(200).send({token: user.session.token})
+                return JSONResponse.status(200).send({
+                    token: user.session.token
+                })
             } else {
                 await deleteUserSession(user.id)
             }
@@ -47,7 +47,6 @@ export async function loginHandler(request: Request) {
         })
 
         await createUserSession(user.id, token)
-        await createSessionCookie(token)
 
         return JSONResponse.status(200)
             .send({token})
