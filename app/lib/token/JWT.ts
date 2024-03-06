@@ -1,11 +1,11 @@
 'use server'
 
 import jwt from 'jsonwebtoken'
-import { type SessionCookie } from '../definitions'
+import {type SessionCookie} from '../definitions'
 
 export async function createToken(data: SessionCookie, expiresIn: string = '1 h') {
     const privateKey = process.env['JWT_PRIVATE_KEY'] as string
-    
+
     return jwt.sign(
         data,
         privateKey,

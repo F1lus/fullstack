@@ -1,6 +1,12 @@
 import { faker } from '@faker-js/faker'
 import { PrismaClient } from '@prisma/client'
 
+/**
+ * Creates a fake user
+ * 
+ * @param prisma 
+ * @returns 
+ */
 export async function UserSeeder(prisma: PrismaClient) {
     return await prisma.user.create({ 
         data: {

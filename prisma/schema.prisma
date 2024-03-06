@@ -28,7 +28,7 @@ model User {
   profilePicturePath String @default("/profile_ph.webp")
   password String
   createdAt DateTime @default(now())
-  modifiedAt DateTime?
+  modifiedAt DateTime @updatedAt
 
   //Relation
   tweets Tweet[] @relation("TweetOwner")
@@ -44,7 +44,7 @@ model Comment {
   id String @id @default(uuid())
   text String
   createdAt DateTime @default(now())
-  modifiedAt DateTime?
+  modifiedAt DateTime @updatedAt
 
   userId String @unique
   tweetId String @unique
@@ -59,15 +59,16 @@ model Comment {
 model Tweet {
   id String @id @default(uuid())
   description String
-  retweets Int @default(0)
-  isRetweet Boolean @default(false)
   createdAt DateTime @default(now())
-  modifiedAt DateTime?
+  modifiedAt DateTime @updatedAt
 
+  originalTweetId String? @unique
   userId String @unique
 
   //Relations
   Owner User @relation("TweetOwner", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  originalTweet Tweet? @relation("Retweet", fields: [originalTweetId], references: [id])
+  retweets Tweet[] @relation("Retweet")
 
   comments Comment[] @relation("TweetComments")
   likes User[] @relation("LikedTweets")

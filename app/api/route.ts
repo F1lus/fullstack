@@ -1,8 +1,7 @@
-import { JSONResponse } from "../lib/api/JSONResponse";
+import {Reply} from "../lib/api/Reply";
 
 export async function POST() {
-    return JSONResponse.status(200)
-        .send({
-            status: 'You are logged in!'
-        })
+    return Reply.send({
+        status: 'You are logged in!'
+    })
 }
