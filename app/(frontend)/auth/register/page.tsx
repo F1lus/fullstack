@@ -1,39 +1,31 @@
 'use client'
 
-import Image from "next/image"
-import {Button, Input} from "@nextui-org/react";
-import {Query} from "@/app/lib/api/Query";
+import Image from "next/image";
+import {Button, Checkbox, Input} from "@nextui-org/react";
 import {useRouter} from "next/navigation";
+import {Query} from "@/app/lib/api/Query";
 import {useCallback, useState} from "react";
-import {ILoginFormError} from "@/app/lib/api/error/ApiError";
+import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
-import {useCookies} from "react-cookie";
-import {AUTHORIZATION} from "@/app/lib/definitions";
 
-const DAYS = 1
-const MAX_AGE = 60 * 60 * 24 * DAYS
-
-interface ILoginResponse extends ILoginFormError {
-    token: string
-}
-
-export default function LoginPage() {
+export default function RegisterPage() {
 
     const router = useRouter()
-    const [state, setState] = useState<ILoginFormError | string>()
-    const [cookies, setCookie, removeCookie] = useCookies([AUTHORIZATION])
+    const [state, setState] = useState<IRegisterFormError | string>()
 
     const handleSubmit = async (formData: FormData) => {
-        const query = new Query('/auth/login')
+
+        formData.set('termsAccepted', 'on')
+
+        const query = new Query('/auth/register')
         const response = await query.withMethod('POST')
             .withBody(formData)
-            .send<ILoginResponse>()
+            .send<IRegisterFormError>()
 
         if (response.status === 200) {
-            setCookie(AUTHORIZATION, response.data.token, {maxAge: MAX_AGE})
-            router.push('/home')
+            router.push('/auth/login')
         } else {
-            setState(response.data.formError ?? response.data.error)
+            setState(response.data.formError)
         }
     }
 
@@ -51,7 +43,6 @@ export default function LoginPage() {
         }
     }, [state])
 
-
     return (
         <div
             className="w-full h-full pb-[1rem] grid grid-rows-[_1fr] overflow-hidden md:grid-rows-[60vh_1fr] lg:grid-cols-3 lg:h-screen"
@@ -67,9 +58,14 @@ export default function LoginPage() {
                 className="scale-75 md:row-span-2 lg:my-auto lg:scale-100"
             />
 
-            <div className="flex flex-col justify-center items-center gap-4 lg:col-span-2 lg:row-span-2">
-
-                <h1 className="text-4xl font-bold">Login</h1>
+            <div
+                className="flex flex-col justify-center items-center gap-4 lg:col-span-2 lg:row-span-2"
+            >
+                <h1
+                    className="text-4xl font-bold"
+                >
+                    Register
+                </h1>
 
                 {showFormError()}
 
@@ -78,7 +74,7 @@ export default function LoginPage() {
                     action={handleSubmit}
                 >
                     <Input
-                        type="text"
+                        type="email"
                         name="email"
                         label="Email"
                         variant="underlined"
@@ -87,6 +83,31 @@ export default function LoginPage() {
 
                         isInvalid={!!showFieldError()?.email}
                         errorMessage={showFieldError()?.email}
+
+                    />
+
+                    <Input
+                        type="text"
+                        name="username"
+                        label="Username"
+                        variant="underlined"
+                        className="w-3/4"
+                        isRequired
+
+                        isInvalid={!!showFieldError()?.username}
+                        errorMessage={showFieldError()?.username}
+                    />
+
+                    <Input
+                        type="text"
+                        name="displayName"
+                        label="Display Name"
+                        variant="underlined"
+                        className="w-3/4"
+                        isRequired
+
+                        isInvalid={!!showFieldError()?.displayName}
+                        errorMessage={showFieldError()?.displayName}
                     />
 
                     <Input
@@ -101,6 +122,26 @@ export default function LoginPage() {
                         errorMessage={showFieldError()?.password}
                     />
 
+                    <Input
+                        type="password"
+                        name="passwordRepeat"
+                        label="Password Repeat"
+                        variant="underlined"
+                        className="w-3/4"
+                        isRequired
+
+                        isInvalid={!!showFieldError()?.passwordRepeat}
+                        errorMessage={showFieldError()?.passwordRepeat}
+                    />
+
+                    <Checkbox
+                        name="termsAccepted"
+                        className="w-3/4"
+                        isRequired
+                    >
+                        I agree to the terms and conditions
+                    </Checkbox>
+
                     <Button
                         radius="full"
                         color="success"
@@ -111,12 +152,12 @@ export default function LoginPage() {
                     </Button>
 
                     <p>
-                        Don&apos;t have an account?&nbsp;
+                        Already a member?&nbsp;
                         <Link
-                            href={'/auth/register'}
+                            href={'/auth/login'}
                             className="text-blue-500"
                         >
-                            Register
+                            Login
                         </Link>
                     </p>
                 </form>
