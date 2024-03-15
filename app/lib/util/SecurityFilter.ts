@@ -2,12 +2,13 @@
 
 import {type NextRequest} from "next/server";
 import {Query} from "@/app/lib/api/Query";
+import {AUTHORIZATION} from "@/app/lib/definitions";
 
 export class SecurityFilter {
 
     private readonly filters = Object.freeze({
-        publicUrls: ['/_next', '/images'],
-        protectedUrls: ['auth']
+        publicPaths: ['/_next', '/images'],
+        protectedPaths: ['/home']
     })
 
     private readonly origin: string
@@ -16,7 +17,7 @@ export class SecurityFilter {
 
     constructor(request: NextRequest) {
         this.origin = request.nextUrl.origin
-        this.authorization = request.headers.get('Authorization') ?? ''
+        this.authorization = request.cookies.get(AUTHORIZATION)?.value ?? ''
         this.url = request.nextUrl.pathname
 
         console.log('Security filter is called for:', this.url)
@@ -25,7 +26,8 @@ export class SecurityFilter {
     async authenticate() {
         try {
             const query = new Query('/auth/validate')
-            const response = await query.withAuthorization(this.authorization).send()
+            const response = await query.withAuthorization(this.authorization)
+                .send()
 
             return response.status === 200
         } catch {
@@ -35,9 +37,9 @@ export class SecurityFilter {
 
     async isCurrentUrlPublic() {
         return this.filters
-            .publicUrls
+            .publicPaths
             .some(
-                publicUrl => this.url.startsWith(publicUrl)
+                publicPath => this.url.startsWith(publicPath)
             )
     }
 
@@ -46,17 +48,25 @@ export class SecurityFilter {
         const prefix = isApi ? '/api' : ''
         const isLoggedIn = await this.authenticate()
 
-        for (const protectedUrl of this.filters.protectedUrls) {
-            const evaluatedUrl = `${prefix}/${protectedUrl}`
+        const authPath = `${prefix}/auth`
+        const loginPath = `${authPath}/login`
 
-            if (isLoggedIn && this.url.startsWith(evaluatedUrl)) {
-                return new URL(`${prefix}/`, this.origin)
-            }
+        if(isLoggedIn && this.url.startsWith(authPath)) {
+            return new URL('/home', this.origin)
+        }
 
-            if (!isLoggedIn && !this.url.startsWith(evaluatedUrl)) {
-                return new URL(`${prefix}/auth/login`, this.origin)
+        if(!isLoggedIn && !this.url.startsWith(authPath)) {
+            return new URL(loginPath, this.origin)
+        }
+
+        for(const path of this.filters.protectedPaths) {
+            const nextPath = `${prefix}/${path}`
+            if(isLoggedIn && this.url.startsWith(nextPath)) {
+                return new URL(nextPath, this.origin)
             }
         }
+
+        return null
     }
 
 }
