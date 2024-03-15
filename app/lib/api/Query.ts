@@ -24,9 +24,8 @@ export class Query {
 
     get origin() {
         const isProduction = process.env['NODE_ENV'] === 'production'
-
         if (isProduction) {
-            return this.isServer ? process.env['VERCEL_URL'] : window.location.origin
+            return this.isServer ? `https://${process.env['VERCEL_URL']}` : window.location.origin
         }
 
         return this.isServer ? 'http://localhost:3000' : window.location.origin

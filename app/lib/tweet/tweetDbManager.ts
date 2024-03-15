@@ -17,19 +17,31 @@ export async function getAllTweets(page: number = 1) {
     if (page < 1) {
         return [] as Tweet[]
     }
+
     return GlobalPrisma.tweet.findMany({
         skip: 10 * (page - 1),
         take: 10,
-        //TODO: Add cursor based pagination
         select: {
+            _count: {
+                select: {
+                    likes: true,
+                    comments: true,
+                    retweets: true
+                }
+            },
             id: true,
             description: true,
+            originalTweet: true,
             createdAt: true,
             modifiedAt: true,
-            retweets: true,
-            comments: true,
-            likes: true,
-            Owner: true
+            Owner: {
+                select: {
+                    displayName: true,
+                    name: true,
+                    profilePicturePath: true,
+                    createdAt: true
+                }
+            }
         },
         orderBy: {
             createdAt: 'desc'
@@ -56,16 +68,27 @@ export async function getUserTweets(userId: string, page: number = 1) {
     return GlobalPrisma.tweet.findMany({
         skip: 10 * (page - 1),
         take: 10,
-        //TODO: Add cursor based pagination
         select: {
+            _count: {
+                select: {
+                    likes: true,
+                    comments: true,
+                    retweets: true
+                }
+            },
+            id: true,
             description: true,
             createdAt: true,
-            modifiedAt: true,
             originalTweet: true,
-            retweets: true,
-            comments: true,
-            likes: true,
-            Owner: true
+            modifiedAt: true,
+            Owner: {
+                select: {
+                    displayName: true,
+                    name: true,
+                    profilePicturePath: true,
+                    createdAt: true
+                }
+            }
         },
         where: {
             userId
@@ -77,22 +100,34 @@ export async function getUserTweets(userId: string, page: number = 1) {
 }
 
 /**
- * Retrieves one tweet from the database by ID
+ * Retrieves one tweets from the database by ID
  *
  * @param tweetId
- * @returns tweet if the ID exists, otherwise undefined
+ * @returns tweets if the ID exists, otherwise undefined
  */
 export async function getTweet(tweetId: string) {
     return GlobalPrisma.tweet.findUnique({
         select: {
+            _count: {
+                select: {
+                    likes: true,
+                    comments: true,
+                    retweets: true
+                }
+            },
+            id: true,
             description: true,
             createdAt: true,
-            modifiedAt: true,
             originalTweet: true,
-            retweets: true,
-            comments: true,
-            likes: true,
-            Owner: true
+            modifiedAt: true,
+            Owner: {
+                select: {
+                    displayName: true,
+                    name: true,
+                    profilePicturePath: true,
+                    createdAt: true
+                }
+            }
         },
         where: {
             id: tweetId
@@ -101,7 +136,7 @@ export async function getTweet(tweetId: string) {
 }
 
 /**
- * Creates a new tweet
+ * Creates a new tweets
  *
  * @param userId
  * @param description
@@ -123,9 +158,9 @@ export async function createTweet(userId: string, description: string) {
 }
 
 /**
- * Removes a tweet from the database
+ * Removes a tweets from the database
  *
- * @param tweetId the tweet to be removed
+ * @param tweetId the tweets to be removed
  * @param userId the user who sent the request
  * @returns boolean = did the query execute
  */
@@ -141,10 +176,10 @@ export async function deleteTweet(tweetId: string, userId: string) {
 }
 
 /**
- * Modifies a tweet in the database
+ * Modifies a tweets in the database
  * - also updates the modifiedAt property to the current DateTime
  *
- * @param tweetId the tweet to be modified
+ * @param tweetId the tweets to be modified
  * @param userId the user who sent the request
  * @param description the new description
  * @returns boolean = did the query execute
@@ -164,9 +199,9 @@ export async function modifyTweet(tweetId: string, userId: string, description: 
 }
 
 /**
- * Toggles the like on a tweet
- * - if the user has already liked the tweet, the like will be removed
- * - if the user has not liked the tweet yet, the like will be added
+ * Toggles the like on a tweets
+ * - if the user has already liked the tweets, the like will be removed
+ * - if the user has not liked the tweets yet, the like will be added
  *
  * @param tweetId
  * @param userId
@@ -209,14 +244,14 @@ export async function toggleTweetLike(tweetId: string, userId: string) {
 }
 
 /**
- * Retweets a tweet
+ * Retweets a tweets
  *
- * Retweeting means that we create a new tweet
- * which has a parent tweet
+ * Retweeting means that we create a new tweets
+ * which has a parent tweets
  *
  * @param userId the user who wants to retweet something
- * @param tweetId the tweet to be retweeted
- * @param description the description for the tweet
+ * @param tweetId the tweets to be retweeted
+ * @param description the description for the tweets
  * @returns boolean = did the query execute
  */
 export async function retweet(tweetId: string, userId: string, description: string) {

@@ -6,11 +6,11 @@ import {getUserFromSession} from "@/app/lib/util/SessionHandler";
 import {AppError} from "@/app/lib/api/error/AppError";
 import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 import {parseForm} from "@/app/lib/util/FormHandler";
-import {TweetParams} from "@/app/api/tweet/[id]/definitions";
+import {TweetParams} from "@/app/api/tweets/[id]/definitions";
 import {FormError} from "@/app/lib/api/error/FormError";
 
 /**
- * Retrieve a tweet by ID
+ * Retrieve a tweets by ID
  *
  * @param request
  * @param param
@@ -32,7 +32,7 @@ export async function DELETE(request: Request, {params: {id}}: TweetParams) {
         const isDeleted = await deleteTweet(id, user.id)
 
         if (!isDeleted) {
-            throw new AppError('The tweet could not be deleted!')
+            throw new AppError('The tweets could not be deleted!')
         }
 
         return Reply.withStatus(200).send()
@@ -50,10 +50,10 @@ export async function PATCH(request: Request, {params: {id}}: TweetParams) {
 
         const didTweetModify = await modifyTweet(id, user.id, description)
         if (!didTweetModify) {
-            throw new FormError({description: 'The tweet could not be modified'})
+            throw new FormError({description: 'The tweets could not be modified'})
         }
 
-        return Reply.send({msg: "The tweet has been modified"})
+        return Reply.send({msg: "The tweets has been modified"})
     } catch (error) {
         return ErrorHandler(error)
     }
@@ -72,7 +72,7 @@ export async function POST(request: Request, {params: {id}}: TweetParams) {
         }
 
         return Reply.withStatus(201).send({
-            msg: "The tweet has been created!"
+            msg: "The tweets has been created!"
         })
     } catch (error) {
         return ErrorHandler(error)

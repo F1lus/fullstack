@@ -1,6 +1,6 @@
 'use server'
 
-import {TweetParams} from "@/app/api/tweet/[id]/definitions";
+import {TweetParams} from "@/app/api/tweets/[id]/definitions";
 import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 import {getUserFromSession} from "@/app/lib/util/SessionHandler";
 import {toggleTweetLike} from "@/app/lib/tweet/tweetDbManager";
@@ -14,7 +14,7 @@ export async function PATCH(_: Request, {params}: TweetParams) {
 
         const didUpdate = await toggleTweetLike(id, user.id)
         if (!didUpdate) {
-            throw new AppError('You cannot like/unlike this tweet right now')
+            throw new AppError('You cannot like/unlike this tweets right now')
         }
 
         return Reply.send()
