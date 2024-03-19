@@ -7,11 +7,6 @@ import {useRouter} from "next/navigation";
 import {useCallback, useState} from "react";
 import {ILoginFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
-import {useCookies} from "react-cookie";
-import {AUTHORIZATION} from "@/app/lib/definitions";
-
-const DAYS = 1
-const MAX_AGE = 60 * 60 * 24 * DAYS
 
 interface ILoginResponse extends ILoginFormError {
     token: string
@@ -21,7 +16,6 @@ export default function LoginPage() {
 
     const router = useRouter()
     const [state, setState] = useState<ILoginFormError | string>()
-    const [cookies, setCookie, removeCookie] = useCookies([AUTHORIZATION])
 
     const handleSubmit = async (formData: FormData) => {
         const query = new Query('/auth/login')
@@ -30,7 +24,6 @@ export default function LoginPage() {
             .send<ILoginResponse>()
 
         if (response.status === 200) {
-            //setCookie(AUTHORIZATION, response.data.token, {maxAge: MAX_AGE})
             router.push('/home')
         } else {
             setState(response.data.formError ?? response.data.error)

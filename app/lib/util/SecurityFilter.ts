@@ -20,7 +20,6 @@ export class SecurityFilter {
         this.authorization = request.cookies.get(AUTHORIZATION)?.value ?? ''
         this.url = request.nextUrl.pathname
 
-        console.log(this.authorization)
         console.log('Security filter is called for:', this.url)
     }
 
@@ -30,7 +29,6 @@ export class SecurityFilter {
             const response = await query.withAuthorization(this.authorization)
                 .send()
 
-            console.log(response.status)
             return response.status === 200
         } catch(error) {
             console.error(error)
@@ -54,26 +52,21 @@ export class SecurityFilter {
         const authPath = `${prefix}/auth`
         const loginPath = `${authPath}/login`
 
-        console.log(authPath)
         if(isLoggedIn && this.url.startsWith(authPath)) {
-            console.log(1)
             return new URL('/home', this.origin)
         }
 
         if(!isLoggedIn && !this.url.startsWith(authPath)) {
-            console.log(2)
             return new URL(loginPath, this.origin)
         }
 
         for(const path of this.filters.protectedPaths) {
             const nextPath = `${prefix}/${path}`
             if(isLoggedIn && this.url.startsWith(nextPath)) {
-                console.log(3)
                 return new URL(nextPath, this.origin)
             }
         }
 
-        console.log(4)
         return null
     }
 
