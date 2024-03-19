@@ -81,6 +81,7 @@ export class Query {
     }
 
     async send<T = any>() {
+        console.log(this.path)
         const response = await fetch(this.path, this.requestInit)
         const data: T & { error?: string } = await response.json()
 
