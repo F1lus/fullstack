@@ -30,6 +30,7 @@ export class SecurityFilter {
             const response = await query.withAuthorization(this.authorization)
                 .send()
 
+            console.log(response.status)
             return response.status === 200
         } catch {
             return false
