@@ -52,6 +52,7 @@ export class SecurityFilter {
         const authPath = `${prefix}/auth`
         const loginPath = `${authPath}/login`
 
+        console.log(authPath)
         if(isLoggedIn && this.url.startsWith(authPath)) {
             console.log(1)
             return new URL('/home', this.origin)
