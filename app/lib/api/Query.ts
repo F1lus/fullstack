@@ -39,7 +39,7 @@ export class Query {
     /**
      * Tells the query builder to add authentication header
      * In a client component, the authentication token is
-     * received from the SessionStorage, with an Authorization key
+     * received from the cookie, with an Authorization key
      *
      * @param token only use this if you need a special token, or you're in a server component
      * and need authentication
@@ -47,10 +47,10 @@ export class Query {
     withAuthorization(token?: string) {
         const clientToken = this.isServer ? token : sessionStorage.getItem(AUTHORIZATION)
         if (token) {
-            return this.withHeader(AUTHORIZATION, token ?? '')
+            return this.withCookie(AUTHORIZATION, token ?? '')
         }
 
-        return this.withHeader(AUTHORIZATION, clientToken ?? '')
+        return this.withCookie(AUTHORIZATION, clientToken ?? '')
     }
 
     withContentType(contentType: ContentType) {
@@ -73,6 +73,11 @@ export class Query {
 
     withHeader(key: string, value: string) {
         this.headers.set(key, value)
+        return this
+    }
+
+    withCookie(key: string, value: string) {
+        this.headers.set('Cookie', `${key}=${value}`)
         return this
     }
 
