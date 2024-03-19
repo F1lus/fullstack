@@ -20,6 +20,7 @@ export class SecurityFilter {
         this.authorization = request.cookies.get(AUTHORIZATION)?.value ?? ''
         this.url = request.nextUrl.pathname
 
+        console.log(this.authorization)
         console.log('Security filter is called for:', this.url)
     }
 
