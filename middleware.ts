@@ -16,5 +16,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
+    console.log(nextURL)
+
     return NextResponse.redirect(nextURL)
 }
