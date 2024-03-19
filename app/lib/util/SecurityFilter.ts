@@ -32,7 +32,8 @@ export class SecurityFilter {
 
             console.log(response.status)
             return response.status === 200
-        } catch {
+        } catch(error) {
+            console.error(error)
             return false
         }
     }
