@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 
 /**
- * Creates a fake comment for a tweet
+ * Creates a fake comment for a tweets
  * 
  * @param prisma 
  * @param userId 

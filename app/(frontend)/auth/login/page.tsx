@@ -30,7 +30,7 @@ export default function LoginPage() {
             .send<ILoginResponse>()
 
         if (response.status === 200) {
-            setCookie(AUTHORIZATION, response.data.token, {maxAge: MAX_AGE})
+            //setCookie(AUTHORIZATION, response.data.token, {maxAge: MAX_AGE})
             router.push('/home')
         } else {
             setState(response.data.formError ?? response.data.error)
