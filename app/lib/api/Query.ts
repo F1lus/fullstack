@@ -1,4 +1,6 @@
-import {AUTHORIZATION, ContentType, HTTPMethod} from "../definitions"
+import {AUTHORIZATION, HTTPMethod} from "../definitions"
+import {IFormError} from "@/app/lib/api/error/ApiError";
+import {Observable} from "rxjs";
 
 export class Query {
 
@@ -52,10 +54,6 @@ export class Query {
         return this.withCookie(AUTHORIZATION, clientToken ?? '')
     }
 
-    withContentType(contentType: ContentType) {
-        return this.withHeader('Content-Type', contentType)
-    }
-
     withMethod(httpMethod: HTTPMethod) {
         this.requestInit.method = httpMethod
         return this
@@ -80,9 +78,41 @@ export class Query {
         return this
     }
 
+    build<T>() {
+        return new Observable<T>(observer => {
+            fetch(this.path, this.requestInit)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.error) {
+                        observer.error({ error: data.error })
+                    }
+
+                    if(data.formError) {
+                        observer.error({ formError: data.formError })
+                    }
+
+                    observer.next(data as T)
+                    observer.complete()
+                })
+                .catch(_ => {
+                    //TODO: More error handling
+                    observer.error('Could not retrieve data from the server')
+                })
+        })
+    }
+
+    /** @deprecated use build instead */
     async send<T = any>() {
         const response = await fetch(this.path, this.requestInit)
-        const data: T & { error?: string } = await response.json()
+        const data: T & { error?: string, formError?: IFormError } = await response.json()
+
+        if(data.error) {
+            throw data.error
+        }
+
+        if(data.formError) {
+            throw data.formError
+        }
 
         return {
             status: response.status,

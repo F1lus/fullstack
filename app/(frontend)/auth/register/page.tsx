@@ -25,6 +25,7 @@ export default function RegisterPage() {
         if (response.status === 200) {
             router.push('/auth/login')
         } else {
+            console.log(response.data.error, response.data.formError)
             setState(response.data.formError)
         }
     }
