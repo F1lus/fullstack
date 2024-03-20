@@ -72,3 +72,26 @@ export type SessionCookie = {
 }
 
 //endregion Session
+
+//region Tweet
+
+export type TweetProps = {
+    id: string,
+    description: string,
+    createdAt: Date,
+    modifiedAt: Date,
+    _count: {
+        comments: number,
+        retweets: number,
+        likes: number
+    },
+    Owner: {
+        name: string,
+        displayName: string,
+        profilePicturePath: string,
+        createdAt: Date
+    }
+    originalTweet?: TweetProps
+}
+
+//endregion Tweet
