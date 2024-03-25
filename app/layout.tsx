@@ -1,30 +1,34 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type {Metadata} from "next";
+import {Inter} from "next/font/google";
 import {Providers} from "./providers"
+import "./globals.css";
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import {config} from '@fortawesome/fontawesome-svg-core';
 
-const inter = Inter({ subsets: ["latin"] });
+config.autoAddCss = false;
+
+const inter = Inter({subsets: ["latin"]});
 
 export const metadata: Metadata = {
-  title: {
-    template: "%s | CopX",
-    default: "CopX",
-  },
-  description: "The best and newest social media platform.",
+    title: {
+        template: "CopX",
+        default: "CopX",
+    },
+    description: "The best and newest social media platform.",
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
+    return (
+        <html lang="en">
+        <body className={`${inter.className} bg-[#F0F2F5]`}>
         <Providers>
-          {children}
+            {children}
         </Providers>
-      </body>
-    </html>
-  );
+        </body>
+        </html>
+    );
 }
