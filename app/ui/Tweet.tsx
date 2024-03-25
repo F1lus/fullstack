@@ -2,6 +2,7 @@ import Image from "next/image";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faComment, faHeart, faShareFromSquare} from "@fortawesome/free-regular-svg-icons";
 import type {TweetProps} from "@/app/lib/definitions";
+import {Query} from "@/app/lib/api/Query";
 
 export default function Tweet(data: TweetProps) {
 
@@ -15,9 +16,21 @@ export default function Tweet(data: TweetProps) {
         }
     }
 
+    const handleLike = async () => {
+        const query = new Query(`tweets/${data.id}/toggleLike`)
+        query.withAuthorization()
+            .withMethod('PATCH')
+            .withBody(data)
+            .send()
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((err) => console.log(err))
+    }
+
     return (
         <div
-            className="w-full h-full flex flex-col items-center gap-10 p-5 shadow-lg lg:w-3/4 lg:rounded-md bg-white"
+            className="w-full h-full flex flex-col items-center gap-10 p-5 shadow-lg lg:w-1/3 lg:rounded-md bg-white"
         >
             <div
                 className="w-full h-full flex items-start lg:w-4/5"
@@ -52,26 +65,30 @@ export default function Tweet(data: TweetProps) {
                 <div
                     className="w-full h-full flex flex-cols justify-between text-[1.5em] pt-5 text-center"
                 >
-                    <div>
+                    <button
+                        onClick={handleLike}
+                    >
                         <FontAwesomeIcon icon={faHeart}/>
                         <p>
                             {data._count.likes}
                         </p>
-                    </div>
+                    </button>
 
-                    <div>
+                    <button
+                    >
                         <FontAwesomeIcon icon={faShareFromSquare}/>
                         <p>
                             {data._count.retweets}
                         </p>
-                    </div>
+                    </button>
 
-                    <div>
+                    <button
+                    >
                         <FontAwesomeIcon icon={faComment}/>
                         <p>
                             {data._count.comments}
                         </p>
-                    </div>
+                    </button>
 
                 </div>
             </div>
