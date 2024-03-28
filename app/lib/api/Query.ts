@@ -74,14 +74,17 @@ export class Query {
     }
 
     withCookie(key: string, value: string) {
-        this.headers.set('Cookie', `${key}=${value}`)
-        return this
+        return this.withHeader('Cookie', `${key}=${value}`)
     }
 
     build<T>() {
-        return new Observable<T>(observer => {
+        return new Observable<{ data: T, status?: any }>(observer => {
+            let statusCode = 200
             fetch(this.path, this.requestInit)
-                .then(response => response.json())
+                .then(response => {
+                    statusCode = response.status
+                    return response.json()
+                })
                 .then(data => {
                     if(data.error) {
                         observer.error({ error: data.error })
@@ -91,7 +94,10 @@ export class Query {
                         observer.error({ formError: data.formError })
                     }
 
-                    observer.next(data as T)
+                    observer.next({
+                        status: statusCode,
+                        data: data as T
+                    })
                     observer.complete()
                 })
                 .catch(_ => {

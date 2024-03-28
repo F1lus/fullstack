@@ -1,6 +1,6 @@
 'use client'
 
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {debounceTime, fromEvent, Subscription, tap} from "rxjs";
 import useQuery from "@/app/ui/hooks/useQuery";
 
@@ -20,21 +20,31 @@ export default function useTweets() {
 
     const subscriptionRef = useRef<Subscription>()
 
-    const handleScroll = useCallback((_: any) => {
+    const getTweets = (initial = false) => {
+        query$.subscribe(({ tweets }) => {
+            if(!!tweets){
+                if(initial) {
+                    setAllTweets(tweets)
+                } else {
+                    setAllTweets(prevState => [ ...prevState, ...tweets ])
+                    page.current++
+                }
+            }
+        })
+    }
+
+    const handleScroll = (_: any) => {
         const bodyHeight = document.body.offsetHeight
         const viewport = window.innerHeight
         const { scrollY } = window
         if(( viewport + scrollY ) >= bodyHeight) {
-            query$.subscribe(({ tweets }) => {
-                if(!!tweets){
-                    setAllTweets(prevState => [ ...prevState, ...tweets ])
-                    page.current++
-                }
-            })
+            console.log('reached the end of the page, checking for new tweets...')
+            getTweets()
         }
-    }, [query$])
+    }
 
     useEffect(() => {
+        getTweets(true)
         subscriptionRef.current = fromEvent(document, 'scroll')
             .pipe(
                 debounceTime(150),
@@ -45,7 +55,8 @@ export default function useTweets() {
         return () => {
             subscriptionRef.current?.unsubscribe()
         }
-    }, [handleScroll])
+        // eslint-disable-next-line
+    }, [])
 
     return allTweets
 }

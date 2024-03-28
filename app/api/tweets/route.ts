@@ -30,6 +30,8 @@ export async function GET(request: NextRequest) {
     const page = searchParams.get('page')
     const userId = searchParams.get('userId')
 
+    console.log(searchParams.entries())
+
     const pageNumber = !!page ? Number.parseInt(page) : 1
 
     let tweets
