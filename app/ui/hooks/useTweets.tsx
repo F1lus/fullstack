@@ -20,32 +20,40 @@ export default function useTweets() {
 
     const subscriptionRef = useRef<Subscription>()
 
-    const handleScroll = useCallback((_: any) => {
+    const getTweets = useCallback(() => {
+        query$.subscribe(({ data }) => {
+            const { tweets } = data
+            if(!!tweets && tweets.length > 0){
+                setAllTweets(prevState => [ ...prevState, ...tweets ])
+                page.current++
+                console.log(page.current)
+            }
+        })
+    }, [query$])
+
+    const handleScroll = useCallback(() => {
         const bodyHeight = document.body.offsetHeight
         const viewport = window.innerHeight
         const { scrollY } = window
+
         if(( viewport + scrollY ) >= bodyHeight) {
-            query$.subscribe(({ tweets }) => {
-                if(!!tweets){
-                    setAllTweets(prevState => [ ...prevState, ...tweets ])
-                    page.current++
-                }
-            })
+            console.log('reached the end of the page, checking for new tweets...')
+            getTweets()
         }
-    }, [query$])
+    }, [getTweets])
 
     useEffect(() => {
-        subscriptionRef.current = fromEvent(document, 'scroll')
-            .pipe(
-                debounceTime(150),
-                tap(handleScroll)
-            )
-            .subscribe()
+        subscriptionRef.current = fromEvent(document, 'scroll').pipe(
+            debounceTime(150),
+            tap(() => handleScroll()),
+        ).subscribe()
+
+        document.dispatchEvent(new Event('scroll'))
 
         return () => {
             subscriptionRef.current?.unsubscribe()
         }
-    }, [handleScroll])
+    }, [handleScroll]);
 
     return allTweets
 }

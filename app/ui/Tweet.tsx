@@ -21,11 +21,10 @@ export default function Tweet(data: TweetProps) {
         query.withAuthorization()
             .withMethod('PATCH')
             .withBody(data)
-            .send()
-            .then((res) => {
-                console.log(res)
+            .build()
+            .subscribe(response => {
+                console.log(response.data)
             })
-            .catch((err) => console.log(err))
     }
 
     return (

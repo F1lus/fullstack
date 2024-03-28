@@ -1,5 +1,4 @@
 import {AUTHORIZATION, HTTPMethod} from "../definitions"
-import {IFormError} from "@/app/lib/api/error/ApiError";
 import {Observable} from "rxjs";
 
 export class Query {
@@ -74,14 +73,17 @@ export class Query {
     }
 
     withCookie(key: string, value: string) {
-        this.headers.set('Cookie', `${key}=${value}`)
-        return this
+        return this.withHeader('Cookie', `${key}=${value}`)
     }
 
     build<T>() {
-        return new Observable<T>(observer => {
+        return new Observable<{ data: T, status?: any }>(observer => {
+            let statusCode = 200
             fetch(this.path, this.requestInit)
-                .then(response => response.json())
+                .then(response => {
+                    statusCode = response.status
+                    return response.json()
+                })
                 .then(data => {
                     if(data.error) {
                         observer.error({ error: data.error })
@@ -91,7 +93,10 @@ export class Query {
                         observer.error({ formError: data.formError })
                     }
 
-                    observer.next(data as T)
+                    observer.next({
+                        status: statusCode,
+                        data: data as T
+                    })
                     observer.complete()
                 })
                 .catch(_ => {
@@ -99,25 +104,5 @@ export class Query {
                     observer.error('Could not retrieve data from the server')
                 })
         })
-    }
-
-    /** @deprecated use build instead */
-    async send<T = any>() {
-        const response = await fetch(this.path, this.requestInit)
-        const data: T & { error?: string, formError?: IFormError } = await response.json()
-
-        if(data.error) {
-            throw data.error
-        }
-
-        if(data.formError) {
-            throw data.formError
-        }
-
-        return {
-            status: response.status,
-            statusText: response.statusText,
-            data
-        }
     }
 }

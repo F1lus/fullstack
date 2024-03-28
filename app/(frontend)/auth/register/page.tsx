@@ -7,6 +7,7 @@ import {Query} from "@/app/lib/api/Query";
 import {useCallback, useState} from "react";
 import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
+import {firstValueFrom} from "rxjs";
 
 export default function RegisterPage() {
 
@@ -18,9 +19,9 @@ export default function RegisterPage() {
         formData.set('termsAccepted', 'on')
 
         const query = new Query('/auth/register')
-        const response = await query.withMethod('POST')
+        const response = await firstValueFrom(query.withMethod('POST')
             .withBody(formData)
-            .send<IRegisterFormError>()
+            .build<IRegisterFormError>())
 
         if (response.status === 200) {
             router.push('/auth/login')

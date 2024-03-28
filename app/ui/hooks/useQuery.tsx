@@ -5,6 +5,7 @@ import {useMemo} from "react";
 import {Query} from "@/app/lib/api/Query";
 import {catchError, of} from "rxjs";
 import useError from "@/app/ui/hooks/useError";
+import {useRouter} from "next/navigation";
 
 interface IQueryParams {
     method: HTTPMethod,
@@ -18,6 +19,8 @@ export default function useQuery<T = any>(params: IQueryParams) {
         _,
         setError
     ] = useError()
+
+    const router = useRouter()
 
     const query = useMemo(() => {
         const builder = new Query(params.URL)
@@ -38,6 +41,11 @@ export default function useQuery<T = any>(params: IQueryParams) {
         return query.build<T>()
             .pipe(
                 catchError(err => {
+                    if(err.status >= 400) {
+                        router.push('/auth/login')
+                        return of()
+                    }
+
                     if (err.formError) {
                         setError({formError: err.formError})
                     } else {
@@ -47,5 +55,5 @@ export default function useQuery<T = any>(params: IQueryParams) {
                     return of()
                 })
             )
-    }, [query, setError])
+    }, [query, router, setError])
 }
