@@ -1,4 +1,5 @@
-import {AUTHORIZATION, ContentType, HTTPMethod} from "../definitions"
+import {AUTHORIZATION, HTTPMethod} from "../definitions"
+import {Observable} from "rxjs";
 
 export class Query {
 
@@ -52,10 +53,6 @@ export class Query {
         return this.withCookie(AUTHORIZATION, clientToken ?? '')
     }
 
-    withContentType(contentType: ContentType) {
-        return this.withHeader('Content-Type', contentType)
-    }
-
     withMethod(httpMethod: HTTPMethod) {
         this.requestInit.method = httpMethod
         return this
@@ -76,18 +73,36 @@ export class Query {
     }
 
     withCookie(key: string, value: string) {
-        this.headers.set('Cookie', `${key}=${value}`)
-        return this
+        return this.withHeader('Cookie', `${key}=${value}`)
     }
 
-    async send<T = any>() {
-        const response = await fetch(this.path, this.requestInit)
-        const data: T & { error?: string } = await response.json()
+    build<T>() {
+        return new Observable<{ data: T, status?: any }>(observer => {
+            let statusCode = 200
+            fetch(this.path, this.requestInit)
+                .then(response => {
+                    statusCode = response.status
+                    return response.json()
+                })
+                .then(data => {
+                    if(data.error) {
+                        observer.error({ error: data.error })
+                    }
 
-        return {
-            status: response.status,
-            statusText: response.statusText,
-            data
-        }
+                    if(data.formError) {
+                        observer.error({ formError: data.formError })
+                    }
+
+                    observer.next({
+                        status: statusCode,
+                        data: data as T
+                    })
+                    observer.complete()
+                })
+                .catch(_ => {
+                    //TODO: More error handling
+                    observer.error('Could not retrieve data from the server')
+                })
+        })
     }
 }

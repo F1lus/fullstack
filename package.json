@@ -12,6 +12,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-regular-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@nextui-org/react": "^2.2.9",
     "@prisma/client": "^5.10.2",
     "crypto-js": "^4.2.0",
@@ -19,7 +22,8 @@
     "jsonwebtoken": "^9.0.2",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

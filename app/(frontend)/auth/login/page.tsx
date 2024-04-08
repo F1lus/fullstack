@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import {useCallback, useState} from "react";
 import {ILoginFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
+import {firstValueFrom} from "rxjs";
 
 interface ILoginResponse extends ILoginFormError {
     token: string
@@ -19,9 +20,9 @@ export default function LoginPage() {
 
     const handleSubmit = async (formData: FormData) => {
         const query = new Query('/auth/login')
-        const response = await query.withMethod('POST')
+        const response = await firstValueFrom(query.withMethod('POST')
             .withBody(formData)
-            .send<ILoginResponse>()
+            .build<ILoginResponse>())
 
         if (response.status === 200) {
             router.push('/home')
