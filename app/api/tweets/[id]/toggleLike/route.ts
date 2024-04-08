@@ -12,12 +12,12 @@ export async function PATCH(_: Request, {params}: TweetParams) {
         const {id} = params
         const user = await getUserFromSession()
 
-        const didUpdate = await toggleTweetLike(id, user.id)
-        if (!didUpdate) {
+        const isTweetLiked = await toggleTweetLike(id, user.id)
+        if (isTweetLiked === undefined) {
             throw new AppError('You cannot like/unlike this tweets right now')
         }
 
-        return Reply.send()
+        return Reply.send({ isTweetLiked })
     } catch (error) {
         return ErrorHandler(error)
     }

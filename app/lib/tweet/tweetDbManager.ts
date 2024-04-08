@@ -11,9 +11,10 @@ import {GlobalPrisma} from "../GlobalPrisma"
  * - if there page is out of bounds, the function returns an empty array
  *
  * @param page 1-based parameter = [1;Infinity)
+ * @param userId
  * @returns Tweet array
  */
-export async function getAllTweets(page: number = 1) {
+export async function getAllTweets(page: number = 1, userId: string) {
     if (page < 1) {
         return [] as Tweet[]
     }
@@ -22,6 +23,14 @@ export async function getAllTweets(page: number = 1) {
         skip: 10 * (page - 1),
         take: 10,
         select: {
+            likes: {
+                select: {
+                    id: true
+                },
+                where: {
+                    id: userId
+                }
+            },
             _count: {
                 select: {
                     likes: true,
@@ -220,7 +229,7 @@ export async function toggleTweetLike(tweetId: string, userId: string) {
 
         const isTweetLiked = user.likedTweets.some(tweet => tweet.id === tweetId)
         const updateBody = {
-            [isTweetLiked ? "connect" : "disconnect"]: {
+            [!isTweetLiked ? "connect" : "disconnect"]: {
                 id: tweetId
             }
         }
@@ -236,10 +245,10 @@ export async function toggleTweetLike(tweetId: string, userId: string) {
             }
         })
 
-        return !!updateQuery
+        return !isTweetLiked
 
-    } catch {
-        return false
+    } catch(error) {
+        return undefined
     }
 }
 

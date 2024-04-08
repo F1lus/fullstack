@@ -75,9 +75,10 @@ export type SessionCookie = {
 
 //region Tweet
 
-export type TweetProps = {
+export type ITweet = {
     id: string,
     description: string,
+    likes: {id: string}[],
     createdAt: Date,
     modifiedAt: Date,
     _count: {
@@ -91,7 +92,7 @@ export type TweetProps = {
         profilePicturePath: string,
         createdAt: Date
     }
-    originalTweet?: TweetProps
+    originalTweet?: ITweet
 }
 
 //endregion Tweet

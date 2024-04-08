@@ -1,15 +1,16 @@
 'use client'
 
-import {useCallback, useEffect, useRef, useState} from "react";
+import {Dispatch, SetStateAction, useCallback, useEffect, useRef, useState} from "react";
 import {debounceTime, fromEvent, Subscription, tap} from "rxjs";
 import useQuery from "@/app/ui/hooks/useQuery";
+import {ITweet} from "@/app/lib/definitions";
 
-export default function useTweets() {
+export default function useTweets(): [ ITweet[], Dispatch<SetStateAction<ITweet[]>> ] {
 
     const [
         allTweets,
         setAllTweets
-    ] = useState<[]>([])
+    ] = useState<ITweet[]>([])
 
     const page = useRef(1)
     const query$ = useQuery<{ tweets: [] }>({
@@ -55,5 +56,5 @@ export default function useTweets() {
         }
     }, [handleScroll]);
 
-    return allTweets
+    return [ allTweets, setAllTweets ]
 }

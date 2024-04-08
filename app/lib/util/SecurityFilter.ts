@@ -3,7 +3,7 @@
 import {type NextRequest} from "next/server";
 import {Query} from "@/app/lib/api/Query";
 import {AUTHORIZATION} from "@/app/lib/definitions";
-import {firstValueFrom} from "rxjs";
+import {lastValueFrom} from "rxjs";
 
 export class SecurityFilter {
 
@@ -27,11 +27,10 @@ export class SecurityFilter {
     async authenticate() {
         try {
             const query = new Query('/auth/validate')
-            const response = await firstValueFrom<any>(query.withAuthorization(this.authorization).build())
+            const response = await lastValueFrom<any>(query.withAuthorization(this.authorization).build())
 
             return response.status === 200
         } catch(error) {
-            console.error(error)
             return false
         }
     }

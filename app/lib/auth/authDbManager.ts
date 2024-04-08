@@ -52,6 +52,7 @@ export async function createUserSession(id: string, token: string) {
             }
         })
     } catch {
+
     }
 }
 

@@ -1,29 +1,46 @@
 import Image from "next/image";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faComment, faHeart, faShareFromSquare} from "@fortawesome/free-regular-svg-icons";
-import type {TweetProps} from "@/app/lib/definitions";
+import type {ITweet} from "@/app/lib/definitions";
 import {Query} from "@/app/lib/api/Query";
+import {useState} from "react";
 
-export default function Tweet(data: TweetProps) {
+interface TweetProps {
+    tweet: ITweet,
+    index: number,
+    setTweet: (index: number, tweet: ITweet) => void
+}
+
+export default function Tweet(tweetProps: TweetProps) {
+
+    const [
+        isTweetLiked,
+        setTweetLiked
+    ] = useState<boolean>(tweetProps.tweet.likes.length == 1)
 
     const renderInnerTweet = () => {
-        if (data.originalTweet) {
+        if (tweetProps.tweet.originalTweet) {
             return (
                 <Tweet
-                    {...data.originalTweet}
+                    tweet={tweetProps.tweet.originalTweet}
+                    index={tweetProps.index}
+                    setTweet={tweetProps.setTweet}
                 />
             )
         }
     }
 
     const handleLike = async () => {
-        const query = new Query(`tweets/${data.id}/toggleLike`)
+        const query = new Query(`tweets/${tweetProps.tweet.id}/toggleLike`)
         query.withAuthorization()
             .withMethod('PATCH')
-            .withBody(data)
-            .build()
-            .subscribe(response => {
-                console.log(response.data)
+            .withBody(tweetProps)
+            .build<{ isTweetLiked: boolean }>()
+            .subscribe(({ data }) => {
+                const tweet = tweetProps.tweet
+                tweet._count.likes += data.isTweetLiked ? 1 : -1
+                tweetProps.setTweet(tweetProps.index, tweet)
+                setTweetLiked(data.isTweetLiked)
             })
     }
 
@@ -35,7 +52,7 @@ export default function Tweet(data: TweetProps) {
                 className="w-full h-full flex items-start lg:w-4/5"
             >
                 <Image
-                    src={data.Owner.profilePicturePath}
+                    src={tweetProps.tweet.Owner.profilePicturePath}
                     alt="profile picture"
                     width={64}
                     height={64}
@@ -47,8 +64,8 @@ export default function Tweet(data: TweetProps) {
                 <div
                     className="flex flex-col items-start gap-1 mx-2 my-auto"
                 >
-                    <p className="font-bold">@{data.Owner.displayName}</p>
-                    <p>{new Date(data.modifiedAt).toDateString()}</p>
+                    <p className="font-bold">@{tweetProps.tweet.Owner.displayName}</p>
+                    <p>{new Date(tweetProps.tweet.modifiedAt).toDateString()}</p>
                 </div>
             </div>
 
@@ -56,7 +73,7 @@ export default function Tweet(data: TweetProps) {
                 className="w-full h-full items-start lg:w-4/5"
             >
                 <p>
-                    {data.description}
+                    {tweetProps.tweet.description}
                 </p>
 
                 {renderInnerTweet()}
@@ -67,9 +84,12 @@ export default function Tweet(data: TweetProps) {
                     <button
                         onClick={handleLike}
                     >
-                        <FontAwesomeIcon icon={faHeart}/>
+                        <FontAwesomeIcon
+                            icon={faHeart}
+                            color={isTweetLiked ? 'red' : undefined}
+                        />
                         <p>
-                            {data._count.likes}
+                            {tweetProps.tweet._count.likes}
                         </p>
                     </button>
 
@@ -77,7 +97,7 @@ export default function Tweet(data: TweetProps) {
                     >
                         <FontAwesomeIcon icon={faShareFromSquare}/>
                         <p>
-                            {data._count.retweets}
+                            {tweetProps.tweet._count.retweets}
                         </p>
                     </button>
 
@@ -85,7 +105,7 @@ export default function Tweet(data: TweetProps) {
                     >
                         <FontAwesomeIcon icon={faComment}/>
                         <p>
-                            {data._count.comments}
+                            {tweetProps.tweet._count.comments}
                         </p>
                     </button>
 

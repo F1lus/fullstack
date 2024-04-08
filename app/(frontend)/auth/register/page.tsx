@@ -15,20 +15,20 @@ export default function RegisterPage() {
     const [state, setState] = useState<IRegisterFormError | string>()
 
     const handleSubmit = async (formData: FormData) => {
-
         formData.set('termsAccepted', 'on')
 
         const query = new Query('/auth/register')
-        const response = await firstValueFrom(query.withMethod('POST')
+        query.withMethod('POST')
             .withBody(formData)
-            .build<IRegisterFormError>())
-
-        if (response.status === 200) {
-            router.push('/auth/login')
-        } else {
-            console.log(response.data.error, response.data.formError)
-            setState(response.data.formError)
-        }
+            .build<IRegisterFormError>()
+            .subscribe({
+                next: value => {
+                    router.push('/auth/login')
+                },
+                error: err => {
+                    setState(err.formError)
+                }
+            })
     }
 
     const showFormError = useCallback(() => {
