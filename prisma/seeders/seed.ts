@@ -12,7 +12,7 @@ const RANDOM_CHANCE = 0.25
  * A seeder will only execute when it is called within this function
  */
 async function seed() {
-    for (const _ of Array(5)) {
+    for (const _ of Array(20)) {
         const user = await UserSeeder(prisma)
         const tweet = await TweetSeeder(prisma, user.id)
         const comment = await CommentSeeder(prisma, user.id, tweet.id)

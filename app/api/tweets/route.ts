@@ -5,6 +5,9 @@ import {getUserFromSession} from "@/app/lib/util/SessionHandler"
 import {createTweet, getAllTweets, getUserTweets} from "@/app/lib/tweet/tweetDbManager"
 import {parseForm} from "@/app/lib/util/FormHandler";
 import {NextRequest} from "next/server";
+import {cookies} from "next/headers";
+import {AUTHORIZATION} from "@/app/lib/definitions";
+import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 export async function POST(request: Request) {
     const formData = await parseForm(request)
@@ -26,19 +29,24 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: NextRequest) {
-    const searchParams = request.nextUrl.searchParams
-    const page = searchParams.get('page')
-    const userId = searchParams.get('userId')
+    try {
+        const searchParams = request.nextUrl.searchParams
+        const page = searchParams.get('page')
+        const userId = searchParams.get('userId')
+        const currentUser = await getUserFromSession();
 
-    const pageNumber = !!page ? Number.parseInt(page) : 1
+        const pageNumber = !!page ? Number.parseInt(page) : 1
 
-    let tweets
-    if(userId) {
-       tweets = await getUserTweets(userId, pageNumber)
-    } else {
-        tweets = await getAllTweets(pageNumber)
+        let tweets
+        if(userId) {
+            tweets = await getUserTweets(userId, pageNumber)
+        } else {
+            tweets = await getAllTweets(pageNumber, currentUser.id)
+        }
+
+        return Reply.withStatus(200)
+            .send({ tweets })
+    } catch(error) {
+        return ErrorHandler(error)
     }
-
-    return Reply.withStatus(200)
-        .send({ tweets })
 }
