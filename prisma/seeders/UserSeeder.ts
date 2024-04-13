@@ -8,13 +8,13 @@ import { PrismaClient } from '@prisma/client'
  * @returns 
  */
 export async function UserSeeder(prisma: PrismaClient) {
-    return await prisma.user.create({ 
+    return prisma.user.create({
         data: {
             name: faker.internet.userName(),
             displayName: faker.internet.displayName(),
             email: faker.internet.email(),
-            role: faker.helpers.arrayElement([ 'common', 'common', 'common', 'admin' ]),
-            description: faker.helpers.arrayElement([ faker.commerce.productDescription(), null ]),
+            role: faker.helpers.arrayElement(['common', 'common', 'common', 'admin']),
+            description: faker.helpers.arrayElement([faker.commerce.productDescription(), null]),
             profilePicturePath: '/profile_ph.webp',
             password: faker.internet.password()
         },

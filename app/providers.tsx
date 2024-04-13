@@ -1,21 +1,29 @@
 'use client'
 
-import { NextUIProvider } from "@nextui-org/react"
-import {ErrorContext, ErrorState} from "@/app/ui/context/ErrorContext";
-import {useState} from "react";
+import {NextUIProvider} from "@nextui-org/react"
+import {NotificationContext, INotification} from "@/app/ui/context/NotificationContext";
+import {ReactNode, useState} from "react";
+import {LoadingContext} from "@/app/ui/context/LoadingContext";
 
-export function Providers({children} : Readonly<{children: React.ReactNode}>) {
+export function Providers({children}: Readonly<{ children: ReactNode }>) {
 
     const [
-        errorState,
-        setError
-    ] = useState<ErrorState | undefined>()
+        notification,
+        setNotification
+    ] = useState<INotification | undefined>()
+
+    const [
+        isLoading,
+        setIsLoading
+    ] = useState<boolean>(false)
 
     return (
         <NextUIProvider>
-            <ErrorContext.Provider value={{ errorState, setError }}>
-                {children}
-            </ErrorContext.Provider>
+            <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+                <NotificationContext.Provider value={{notification, setNotification}}>
+                    {children}
+                </NotificationContext.Provider>
+            </LoadingContext.Provider>
         </NextUIProvider>
     )
 }

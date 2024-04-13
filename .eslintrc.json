@@ -1,3 +1,13 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-console": "warn",
+    "no-duplicate-imports": "error",
+    "arrow-spacing": "warn",
+    "array-bracket-spacing": "warn",
+    "block-spacing": "warn",
+    "no-var": "error",
+    "camelcase": "error",
+    "spaced-comment": "warn"
+  }
 }

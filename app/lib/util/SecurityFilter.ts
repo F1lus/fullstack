@@ -21,7 +21,7 @@ export class SecurityFilter {
         this.authorization = request.cookies.get(AUTHORIZATION)?.value ?? ''
         this.url = request.nextUrl.pathname
 
-        console.log('Security filter is called for:', this.url)
+        // console.log('Security filter is called for:', this.url)
     }
 
     async authenticate() {

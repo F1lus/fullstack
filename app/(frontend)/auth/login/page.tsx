@@ -1,121 +1,122 @@
 'use client'
 
-import Image from "next/image"
 import {Button, Input} from "@nextui-org/react";
-import {Query} from "@/app/lib/api/Query";
 import {useRouter} from "next/navigation";
-import {useCallback, useState} from "react";
+import {useState} from "react";
 import {ILoginFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUser} from "@fortawesome/free-regular-svg-icons";
+import {motion} from "framer-motion";
+import useLoading from "@/app/ui/hooks/useLoading";
+import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
 
-interface ILoginResponse extends ILoginFormError {
-    token: string
-}
+const variants = {
+    hidden: {opacity: 0, x: -100, y: 0},
+    enter: {opacity: 1, x: 0, y: 0},
+    exit: {opacity: 0, x: 100, y: 0}
+};
 
 export default function LoginPage() {
 
     const router = useRouter()
-    const [state, setState] = useState<ILoginFormError | string>()
+    const query$ = useQuery()
+
+    const [
+        formError,
+        setFormError
+    ] = useState<ILoginFormError | undefined>()
+    const [
+        isLoading,
+        setIsLoading
+    ] = useLoading()
 
     const handleSubmit = async (formData: FormData) => {
-        const query = new Query('/auth/login')
-        query.withMethod('POST')
-            .withBody(formData)
-            .build<ILoginResponse>()
-            .subscribe({
-                next: value => {
-                    router.push('/home')
-                },
-                error: error => {
-                    setState(error.formError ?? error.error)
-                }
-            })
+        const params: IQueryParams = {
+            URL: '/auth/login',
+            authorized: false,
+            body: formData,
+            method: 'POST'
+        }
+        setIsLoading(true)
+
+        query$(params).subscribe({
+            next: () => {
+                router.push('/home')
+            },
+            error: err => {
+                setFormError(err.formError)
+            }
+        })
     }
-
-    const showFormError = useCallback(() => {
-        if (typeof state === "string") {
-            return (
-                <p className="text-red-500">{state}</p>
-            )
-        }
-    }, [state])
-
-    const showFieldError = useCallback(() => {
-        if (typeof state !== 'string') {
-            return state
-        }
-    }, [state])
 
 
     return (
-        <div
-            className="w-full h-full pb-[1rem] grid grid-rows-[_1fr] overflow-hidden md:grid-rows-[60vh_1fr] lg:grid-cols-3 lg:h-screen"
+        <motion.div
+            key='login'
+            className="flex flex-col justify-center items-center gap-4 lg:col-span-2 lg:row-span-2"
+            initial="hidden"
+            animate="enter"
+            exit="exit"
+            variants={variants}
+            transition={{type: 'easeIn'}}
         >
-
-            <Image
-                src="/images/bird.png"
-                alt="bird background"
-                width={1280}
-                height={720}
-                priority
-
-                className="scale-75 md:row-span-2 lg:my-auto lg:scale-100"
+            <FontAwesomeIcon
+                className="text-[5em]"
+                icon={faUser}
             />
 
-            <div className="flex flex-col justify-center items-center gap-4 lg:col-span-2 lg:row-span-2">
+            <h1 className="text-4xl font-bold">Login</h1>
+            <p className="text-1xl">In order to continue, please sign in!</p>
 
-                <h1 className="text-4xl font-bold">Login</h1>
+            <form
+                className="flex flex-col justify-center items-center gap-4 w-full"
+                action={handleSubmit}
+            >
+                <Input
+                    type="text"
+                    name="email"
+                    label="Email"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
 
-                {showFormError()}
+                    isInvalid={!!formError?.email}
+                    errorMessage={formError?.email}
+                />
 
-                <form
-                    className="flex flex-col justify-center items-center gap-4 w-full"
-                    action={handleSubmit}
+                <Input
+                    type="password"
+                    name="password"
+                    label="Password"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
+
+                    isInvalid={!!formError?.password}
+                    errorMessage={formError?.password}
+                />
+
+                <Button
+                    radius="full"
+                    color="success"
+                    variant="shadow"
+                    type="submit"
+                    isLoading={isLoading}
                 >
-                    <Input
-                        type="text"
-                        name="email"
-                        label="Email"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
+                    Sign In
+                </Button>
 
-                        isInvalid={!!showFieldError()?.email}
-                        errorMessage={showFieldError()?.email}
-                    />
-
-                    <Input
-                        type="password"
-                        name="password"
-                        label="Password"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
-
-                        isInvalid={!!showFieldError()?.password}
-                        errorMessage={showFieldError()?.password}
-                    />
-
-                    <Button
-                        radius="full"
-                        color="success"
-                        variant="shadow"
-                        type="submit"
+                <p>
+                    Don&apos;t have an account?&nbsp;
+                    <Link
+                        href={'/auth/register'}
+                        className="text-blue-500"
                     >
-                        Sign In
-                    </Button>
-
-                    <p>
-                        Don&apos;t have an account?&nbsp;
-                        <Link
-                            href={'/auth/register'}
-                            className="text-blue-500"
-                        >
-                            Register
-                        </Link>
-                    </p>
-                </form>
-            </div>
-        </div>
+                        Register
+                    </Link>
+                </p>
+            </form>
+        </motion.div>
     )
 }

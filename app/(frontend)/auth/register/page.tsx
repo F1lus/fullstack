@@ -1,169 +1,185 @@
 'use client'
 
-import Image from "next/image";
 import {Button, Checkbox, Input} from "@nextui-org/react";
 import {useRouter} from "next/navigation";
-import {Query} from "@/app/lib/api/Query";
 import {useCallback, useState} from "react";
-import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
-import {firstValueFrom} from "rxjs";
+import {motion} from "framer-motion";
+import useLoading from "@/app/ui/hooks/useLoading";
+import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
+import {faAddressCard} from "@fortawesome/free-regular-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
+import useNotification from "@/app/ui/hooks/useNotification";
+import {NotificationType} from "@/app/ui/context/NotificationContext";
+
+const variants = {
+    hidden: {opacity: 0, x: -100, y: 0},
+    enter: {opacity: 1, x: 0, y: 0},
+    exit: {opacity: 0, x: 100, y: 0}
+};
 
 export default function RegisterPage() {
 
     const router = useRouter()
-    const [state, setState] = useState<IRegisterFormError | string>()
+    const query$ = useQuery()
+
+    const { setNotification } = useNotification()
+
+    const [
+        isLoading,
+        setIsLoading
+    ] = useLoading()
+
+    const [
+        formError,
+        setFormError
+    ] = useState<IRegisterFormError | undefined>()
 
     const handleSubmit = async (formData: FormData) => {
+        setIsLoading(true)
         formData.set('termsAccepted', 'on')
 
-        const query = new Query('/auth/register')
-        query.withMethod('POST')
-            .withBody(formData)
-            .build<IRegisterFormError>()
-            .subscribe({
-                next: value => {
-                    router.push('/auth/login')
-                },
-                error: err => {
-                    setState(err.formError)
-                }
-            })
+        const params: IQueryParams = {
+            URL: '/auth/register',
+            authorized: false,
+            method: 'POST',
+            body: formData
+        }
+
+
+        query$(params).subscribe({
+            next: () => {
+                setNotification({
+                    type: NotificationType.SUCCESS,
+                    message: 'Your account has been created! You can now log in.'
+                })
+                router.push('/auth/login')
+            },
+            error: err => {
+                setFormError(err.formError)
+            }
+        })
     }
 
-    const showFormError = useCallback(() => {
-        if (typeof state === "string") {
-            return (
-                <p className="text-red-500">{state}</p>
-            )
-        }
-    }, [state])
-
     const showFieldError = useCallback(() => {
-        if (typeof state !== 'string') {
-            return state
+        if (formError) {
+            return formError
         }
-    }, [state])
+    }, [formError])
 
     return (
-        <div
-            className="w-full h-full pb-[1rem] grid grid-rows-[_1fr] overflow-hidden md:grid-rows-[60vh_1fr] lg:grid-cols-3 lg:h-screen"
+        <motion.div
+            className="flex flex-col justify-center items-center gap-4 lg:col-span-2 lg:row-span-2"
+            initial="hidden"
+            animate="enter"
+            exit="exit"
+            variants={variants}
+            transition={{type: 'linear'}}
         >
 
-            <Image
-                src="/images/bird.png"
-                alt="bird background"
-                width={1280}
-                height={720}
-                priority
+            <FontAwesomeIcon icon={faAddressCard} className='text-[5em]' />
 
-                className="scale-75 md:row-span-2 lg:my-auto lg:scale-100"
-            />
-
-            <div
-                className="flex flex-col justify-center items-center gap-4 lg:col-span-2 lg:row-span-2"
+            <h1
+                className="text-4xl font-bold"
             >
-                <h1
-                    className="text-4xl font-bold"
+                Register
+            </h1>
+            <p className="text-1xl">We would love to have you on board!</p>
+
+            <form
+                className="flex flex-col justify-center items-center gap-4 w-full"
+                action={handleSubmit}
+            >
+                <Input
+                    type="email"
+                    name="email"
+                    label="Email"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
+
+                    isInvalid={!!showFieldError()?.email}
+                    errorMessage={showFieldError()?.email}
+
+                />
+
+                <Input
+                    type="text"
+                    name="username"
+                    label="Username"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
+
+                    isInvalid={!!showFieldError()?.username}
+                    errorMessage={showFieldError()?.username}
+                />
+
+                <Input
+                    type="text"
+                    name="displayName"
+                    label="Display Name"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
+
+                    isInvalid={!!showFieldError()?.displayName}
+                    errorMessage={showFieldError()?.displayName}
+                />
+
+                <Input
+                    type="password"
+                    name="password"
+                    label="Password"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
+
+                    isInvalid={!!showFieldError()?.password}
+                    errorMessage={showFieldError()?.password}
+                />
+
+                <Input
+                    type="password"
+                    name="passwordRepeat"
+                    label="Password Repeat"
+                    variant="underlined"
+                    className="w-3/4"
+                    isRequired
+
+                    isInvalid={!!showFieldError()?.passwordRepeat}
+                    errorMessage={showFieldError()?.passwordRepeat}
+                />
+
+                <Checkbox
+                    name="termsAccepted"
+                    className="w-3/4"
+                    isRequired
                 >
-                    Register
-                </h1>
+                    I agree to the terms and conditions
+                </Checkbox>
 
-                {showFormError()}
-
-                <form
-                    className="flex flex-col justify-center items-center gap-4 w-full"
-                    action={handleSubmit}
+                <Button
+                    radius="full"
+                    color="success"
+                    variant="shadow"
+                    type="submit"
+                    isLoading={isLoading}
                 >
-                    <Input
-                        type="email"
-                        name="email"
-                        label="Email"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
+                    Sign In
+                </Button>
 
-                        isInvalid={!!showFieldError()?.email}
-                        errorMessage={showFieldError()?.email}
-
-                    />
-
-                    <Input
-                        type="text"
-                        name="username"
-                        label="Username"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
-
-                        isInvalid={!!showFieldError()?.username}
-                        errorMessage={showFieldError()?.username}
-                    />
-
-                    <Input
-                        type="text"
-                        name="displayName"
-                        label="Display Name"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
-
-                        isInvalid={!!showFieldError()?.displayName}
-                        errorMessage={showFieldError()?.displayName}
-                    />
-
-                    <Input
-                        type="password"
-                        name="password"
-                        label="Password"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
-
-                        isInvalid={!!showFieldError()?.password}
-                        errorMessage={showFieldError()?.password}
-                    />
-
-                    <Input
-                        type="password"
-                        name="passwordRepeat"
-                        label="Password Repeat"
-                        variant="underlined"
-                        className="w-3/4"
-                        isRequired
-
-                        isInvalid={!!showFieldError()?.passwordRepeat}
-                        errorMessage={showFieldError()?.passwordRepeat}
-                    />
-
-                    <Checkbox
-                        name="termsAccepted"
-                        className="w-3/4"
-                        isRequired
+                <p>
+                    Already a member?&nbsp;
+                    <Link
+                        href={'/auth/login'}
+                        className="text-blue-500"
                     >
-                        I agree to the terms and conditions
-                    </Checkbox>
-
-                    <Button
-                        radius="full"
-                        color="success"
-                        variant="shadow"
-                        type="submit"
-                    >
-                        Sign In
-                    </Button>
-
-                    <p>
-                        Already a member?&nbsp;
-                        <Link
-                            href={'/auth/login'}
-                            className="text-blue-500"
-                        >
-                            Login
-                        </Link>
-                    </p>
-                </form>
-            </div>
-        </div>
+                        Login
+                    </Link>
+                </p>
+            </form>
+        </motion.div>
     )
 }

@@ -29,7 +29,7 @@ export async function findUserByLogin(email: string, password: string) {
             }
         });
     } catch {
-        throw new AppError('The username or password was incorrect!', 401)
+        throw new AppError('The username or password was incorrect!', 400)
     }
 }
 

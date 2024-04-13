@@ -1,5 +1,5 @@
 import {AUTHORIZATION, HTTPMethod} from "../definitions"
-import {Observable} from "rxjs";
+import {from, of, switchMap, throwError} from "rxjs";
 
 export class Query {
 
@@ -77,32 +77,36 @@ export class Query {
     }
 
     build<T>() {
-        return new Observable<{ data: T, status?: any }>(observer => {
-            let statusCode = 200
-            fetch(this.path, this.requestInit)
-                .then(response => {
+        let statusCode = 200
+        return from(fetch(this.path, this.requestInit))
+            .pipe(
+                switchMap(response => {
                     statusCode = response.status
-                    return response.json()
-                })
-                .then(data => {
+                    return from(response.json())
+                }),
+                switchMap(data => {
                     if(data.error) {
-                        observer.error({ error: data.error })
+                        return throwError(() => {
+                            const error: any = new Error(data.error)
+                            error.status = statusCode
+                            return error
+                        })
                     }
 
                     if(data.formError) {
-                        observer.error({ formError: data.formError })
+                        return throwError(() => {
+                            const error: any = new Error()
+                            error.formError = data.formError
+                            error.status = statusCode
+                            return error
+                        })
                     }
 
-                    observer.next({
+                    return of({
                         status: statusCode,
                         data: data as T
                     })
-                    observer.complete()
                 })
-                .catch(_ => {
-                    //TODO: More error handling
-                    observer.error('Could not retrieve data from the server')
-                })
-        })
+            )
     }
 }

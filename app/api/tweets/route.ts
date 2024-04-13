@@ -5,27 +5,31 @@ import {getUserFromSession} from "@/app/lib/util/SessionHandler"
 import {createTweet, getAllTweets, getUserTweets} from "@/app/lib/tweet/tweetDbManager"
 import {parseForm} from "@/app/lib/util/FormHandler";
 import {NextRequest} from "next/server";
-import {cookies} from "next/headers";
-import {AUTHORIZATION} from "@/app/lib/definitions";
+import {FormError} from "@/app/lib/api/error/FormError";
+import {AppError} from "@/app/lib/api/error/AppError";
 import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 export async function POST(request: Request) {
-    const formData = await parseForm(request)
-    const user = await getUserFromSession()
+    try {
+        const formData = await parseForm(request)
+        const user = await getUserFromSession()
 
-    const description = formData.get('description') as string
-    if (!description || description.length === 0) {
-        return Reply.formError({description: 'Description cannot be empty!'})
+        const description = formData.get('description') as string
+        if (!description || description.length === 0) {
+            throw new FormError({description: 'Description cannot be empty!'})
+        }
+
+        const isTweetCreated = await createTweet(user.id, description)
+        if (!isTweetCreated) {
+            throw new AppError("The tweets could not be created. Please try again!", 406)
+        }
+
+        return Reply.withStatus(201).send({
+            msg: "The tweets has been created!"
+        })
+    } catch (error) {
+        return ErrorHandler(error)
     }
-
-    const isTweetCreated = await createTweet(user.id, description)
-    if (!isTweetCreated) {
-        return Reply.withStatus(406).error("The tweets could not be created. Please try again!")
-    }
-
-    return Reply.withStatus(201).send({
-        msg: "The tweets has been created!"
-    })
 }
 
 export async function GET(request: NextRequest) {
@@ -46,7 +50,7 @@ export async function GET(request: NextRequest) {
 
         return Reply.withStatus(200)
             .send({ tweets })
-    } catch(error) {
+    } catch (error) {
         return ErrorHandler(error)
     }
 }

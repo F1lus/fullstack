@@ -4,6 +4,8 @@ import {Providers} from "./providers"
 import "./globals.css";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {config} from '@fortawesome/fontawesome-svg-core';
+import {ReactNode} from "react";
+import Toast from "@/app/ui/notification/Toast";
 
 config.autoAddCss = false;
 
@@ -17,18 +19,15 @@ export const metadata: Metadata = {
     description: "The best and newest social media platform.",
 };
 
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function RootLayout({children}: Readonly<{ children: ReactNode; }>) {
     return (
         <html lang="en">
-        <body className={`${inter.className} bg-[#F0F2F5]`}>
-        <Providers>
-            {children}
-        </Providers>
-        </body>
+            <body className={`${inter.className} bg-[#F0F2F5]`}>
+                <Providers>
+                    {children}
+                    <Toast/>
+                </Providers>
+            </body>
         </html>
     );
 }
