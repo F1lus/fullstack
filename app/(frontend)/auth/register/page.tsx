@@ -24,7 +24,7 @@ export default function RegisterPage() {
     const router = useRouter()
     const query$ = useQuery()
 
-    const { setNotification } = useNotification()
+    const {setNotification} = useNotification()
 
     const [
         isLoading,
@@ -78,7 +78,7 @@ export default function RegisterPage() {
             transition={{type: 'linear'}}
         >
 
-            <FontAwesomeIcon icon={faAddressCard} className='text-[5em]' />
+            <FontAwesomeIcon icon={faAddressCard} className='text-[5em]'/>
 
             <h1
                 className="text-4xl font-bold"
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                     type="submit"
                     isLoading={isLoading}
                 >
-                    Sign In
+                    Sign Up
                 </Button>
 
                 <p>
