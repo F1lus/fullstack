@@ -10,7 +10,7 @@ import {GlobalPrisma} from "../GlobalPrisma"
  * - the elements are ordered by the createdAt attribute
  * - if there page is out of bounds, the function returns an empty array
  *
- * @param page 1-based parameter = [1;Infinity)
+ * @param page 1-based parameter = 1 -> Infinity
  * @param userId
  * @returns Tweet array
  */
@@ -40,7 +40,37 @@ export async function getAllTweets(page: number = 1, userId: string) {
             },
             id: true,
             description: true,
-            originalTweet: true,
+            originalTweet: {
+                select: {
+                    likes: {
+                        select: {
+                            id: true
+                        },
+                        where: {
+                            id: userId
+                        }
+                    },
+                    id: true,
+                    description: true,
+                    createdAt: true,
+                    modifiedAt: true,
+                    _count: {
+                        select: {
+                            likes: true,
+                            comments: true,
+                            retweets: true
+                        }
+                    },
+                    Owner: {
+                        select: {
+                            displayName: true,
+                            name: true,
+                            profilePicturePath: true,
+                            createdAt: true
+                        }
+                    }
+                }
+            },
             createdAt: true,
             modifiedAt: true,
             Owner: {
@@ -65,7 +95,7 @@ export async function getAllTweets(page: number = 1, userId: string) {
  * - the elements are ordered by the createdAt attribute
  * - if there page is out of bounds, the function returns an empty array
  *
- * @param page 1-based parameter = [1;Infinity)
+ * @param page 1-based parameter = 1 -> Infinity
  * @param userId the ID of the user
  * @returns Tweet array
  */
@@ -78,6 +108,14 @@ export async function getUserTweets(userId: string, page: number = 1) {
         skip: 10 * (page - 1),
         take: 10,
         select: {
+            likes: {
+                select: {
+                    id: true
+                },
+                where: {
+                    id: userId
+                }
+            },
             _count: {
                 select: {
                     likes: true,
@@ -88,7 +126,37 @@ export async function getUserTweets(userId: string, page: number = 1) {
             id: true,
             description: true,
             createdAt: true,
-            originalTweet: true,
+            originalTweet: {
+                select: {
+                    likes: {
+                        select: {
+                            id: true
+                        },
+                        where: {
+                            id: userId
+                        }
+                    },
+                    id: true,
+                    description: true,
+                    createdAt: true,
+                    modifiedAt: true,
+                    _count: {
+                        select: {
+                            likes: true,
+                            comments: true,
+                            retweets: true
+                        }
+                    },
+                    Owner: {
+                        select: {
+                            displayName: true,
+                            name: true,
+                            profilePicturePath: true,
+                            createdAt: true
+                        }
+                    }
+                }
+            },
             modifiedAt: true,
             Owner: {
                 select: {
@@ -112,11 +180,20 @@ export async function getUserTweets(userId: string, page: number = 1) {
  * Retrieves one tweets from the database by ID
  *
  * @param tweetId
+ * @param userId
  * @returns tweets if the ID exists, otherwise undefined
  */
-export async function getTweet(tweetId: string) {
+export async function getTweet(tweetId: string, userId: string) {
     return GlobalPrisma.tweet.findUnique({
         select: {
+            likes: {
+                select: {
+                    id: true
+                },
+                where: {
+                    id: userId
+                }
+            },
             _count: {
                 select: {
                     likes: true,
@@ -127,7 +204,37 @@ export async function getTweet(tweetId: string) {
             id: true,
             description: true,
             createdAt: true,
-            originalTweet: true,
+            originalTweet: {
+                select: {
+                    likes: {
+                        select: {
+                            id: true
+                        },
+                        where: {
+                            id: userId
+                        }
+                    },
+                    id: true,
+                    description: true,
+                    createdAt: true,
+                    modifiedAt: true,
+                    _count: {
+                        select: {
+                            likes: true,
+                            comments: true,
+                            retweets: true
+                        }
+                    },
+                    Owner: {
+                        select: {
+                            displayName: true,
+                            name: true,
+                            profilePicturePath: true,
+                            createdAt: true
+                        }
+                    }
+                }
+            },
             modifiedAt: true,
             Owner: {
                 select: {
@@ -234,7 +341,7 @@ export async function toggleTweetLike(tweetId: string, userId: string) {
             }
         }
 
-        const updateQuery = await GlobalPrisma.user.update({
+        await GlobalPrisma.user.update({
             where: {
                 id: userId
             },

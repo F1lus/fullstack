@@ -1,5 +1,5 @@
 import { UserSeeder } from "./UserSeeder";
-import { TweetSeeder } from "./TweetSeeder";
+import {RetweetSeeder, TweetSeeder} from "./TweetSeeder";
 import { CommentSeeder } from "./CommentSeeder";
 import { PrismaClient } from "@prisma/client";
 
@@ -19,6 +19,7 @@ async function seed() {
 
         const shouldLikeTweet = Math.random() < RANDOM_CHANCE
         const shouldLikeComment = Math.random() < RANDOM_CHANCE
+        const shouldRetweet = Math.random() < RANDOM_CHANCE
 
         if(shouldLikeTweet) {
             await prisma.user.update({
@@ -47,6 +48,10 @@ async function seed() {
                     likedComments: true
                 }
             })
+        }
+
+        if(shouldRetweet) {
+            await RetweetSeeder(prisma, user.id, tweet.id)
         }
     }
 }

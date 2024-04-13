@@ -6,17 +6,22 @@ import useTweets from "@/app/ui/hooks/useTweets";
 
 export default function Home() {
 
-    const [ allTweets, setAllTweets ] = useTweets()
+    const [
+        allTweets,
+        setAllTweets
+    ] = useTweets()
 
     function setTweet(index: number, tweet: ITweet) {
         setAllTweets(prevState => {
             prevState[index] = tweet
-            return [ ...prevState ]
+            return [...prevState]
         })
     }
 
     return (
-        <div className="flex flex-col items-center gap-5">
+        <section
+            className="flex flex-col items-center gap-5"
+        >
             {allTweets.map((tweet: ITweet, index) => {
                 return (
                     <Tweet
@@ -28,6 +33,6 @@ export default function Home() {
                 )
             })
             }
-        </div>
+        </section>
     )
 }

@@ -1,59 +1,74 @@
 'use client'
 
 import {HTTPMethod} from "@/app/lib/definitions";
-import {useMemo} from "react";
 import {Query} from "@/app/lib/api/Query";
-import {catchError, of} from "rxjs";
-import useError from "@/app/ui/hooks/useError";
+import {tap} from "rxjs";
 import {useRouter} from "next/navigation";
+import useLoading from "@/app/ui/hooks/useLoading";
+import useNotification from "@/app/ui/hooks/useNotification";
+import {NotificationType} from "@/app/ui/context/NotificationContext";
 
-interface IQueryParams {
+export interface IQueryParams {
     method: HTTPMethod,
     URL: string,
     body?: any,
     authorized?: boolean
 }
 
-export default function useQuery<T = any>(params: IQueryParams) {
+export default function useQuery() {
+    const {
+        setNotification
+    } = useNotification()
     const [
         _,
-        setError
-    ] = useError()
+        setIsLoading
+    ] = useLoading();
 
     const router = useRouter()
 
-    const query = useMemo(() => {
+    function setupQuery(params: IQueryParams) {
         const builder = new Query(params.URL)
         builder.withMethod(params.method)
 
-        if(params.authorized) {
+        if (params.authorized) {
             builder.withAuthorization()
         }
 
-        if(params.method !== 'GET') {
+        if (params.method !== 'GET') {
             builder.withBody(params.body)
         }
 
         return builder
-    }, [params])
+    }
 
-    return useMemo(() => {
-        return query.build<T>()
+    function buildQuery<T = any>(params: IQueryParams) {
+        const builder = setupQuery(params)
+        return builder.build<T>()
             .pipe(
-                catchError(err => {
-                    if(err.status >= 400) {
-                        router.push('/auth/login')
-                        return of()
+                tap({
+                    next: _ => {
+                        setIsLoading(false)
+                    },
+                    error: err => {
+                        if(err.status === 401) {
+                            setNotification({
+                                type: NotificationType.WARNING,
+                                message: 'You have to log in again!'
+                            })
+                            router.push('/auth/login')
+                        } else {
+                            if(err.message) {
+                                setNotification({
+                                    type: NotificationType.ERROR,
+                                    message: err.message
+                                })
+                            }
+                        }
+                        setIsLoading(false)
                     }
-
-                    if (err.formError) {
-                        setError({formError: err.formError})
-                    } else {
-                        setError({error: err.error})
-                    }
-
-                    return of()
                 })
             )
-    }, [query, router, setError])
+    }
+
+    return buildQuery
 }

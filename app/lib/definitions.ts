@@ -1,11 +1,7 @@
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS'
 export const AUTHORIZATION = 'Authorization'
 
-export type ContentType =
-    'application/json'
-    | 'multipart/form-data'
-
-//#region Validator
+// #region Validator
 export type Validator = {
     [key: string]: {
         errorMessage: string,
@@ -14,12 +10,12 @@ export type Validator = {
 }
 
 const EmailValidator = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-const PasswordValidator = /^[A-Za-z\d@$!%*#?&_'"+\-=./()]{8,16}$/
+const PasswordValidator = /(?=.*[0-9])(?=.*[!@#$%^&*_+\-\\()\[\]/'",.:?=])[a-zA-Z0-9!@#$%^&*_+\-\\()\[\]/'",.:?=]{8,16}$/
 const UsernameValidator = /^[\w.]{3,}/
 
-//#endregion Validator
+// #endregion Validator
 
-//#region Login
+// #region Login
 
 export const LoginForm = Object.freeze({
     email: {
@@ -32,9 +28,9 @@ export const LoginForm = Object.freeze({
     }
 } satisfies Validator)
 
-//#endregion Login
+// #endregion Login
 
-//#region Register
+// #region Register
 
 export const RegisterForm = Object.freeze({
     email: {
@@ -63,17 +59,17 @@ export const RegisterForm = Object.freeze({
     }
 } satisfies Validator)
 
-//#endregion Register
+// #endregion Register
 
-//region Session
+// region Session
 
 export type SessionCookie = {
     id: string
 }
 
-//endregion Session
+// endregion Session
 
-//region Tweet
+// region Tweet
 
 export type ITweet = {
     id: string,
@@ -95,4 +91,4 @@ export type ITweet = {
     originalTweet?: ITweet
 }
 
-//endregion Tweet
+// endregion Tweet

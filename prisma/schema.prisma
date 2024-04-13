@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_PRISMA_URL_NON_POOLING")
+  //directUrl = env("POSTGRES_PRISMA_URL_NON_POOLING")
 }
 
 model User {
@@ -39,8 +39,8 @@ model Comment {
   createdAt DateTime @default(now())
   modifiedAt DateTime @updatedAt
 
-  userId String @unique
-  tweetId String @unique
+  userId String
+  tweetId String
 
   //Relations
   Owner User @relation("UserComments", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -55,8 +55,8 @@ model Tweet {
   createdAt DateTime @default(now())
   modifiedAt DateTime @updatedAt
 
-  originalTweetId String? @unique
-  userId String @unique
+  originalTweetId String?
+  userId String
 
   //Relations
   Owner User @relation("TweetOwner", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)

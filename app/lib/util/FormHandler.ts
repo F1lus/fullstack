@@ -1,6 +1,5 @@
 import {Validator} from "../definitions"
 import {AppError} from "@/app/lib/api/error/AppError";
-import {IFormError} from "@/app/lib/api/error/ApiError";
 import {FormError} from "@/app/lib/api/error/FormError";
 
 /**
@@ -15,25 +14,22 @@ function hasEveryKey(formData: FormData, keys: readonly string[]) {
 
 /**
  * Tests the data of the form if every value satisfies the given regex
- * This function assumes that the form has every keys defined in the formValidator
+ * This function assumes that the form has every key defined in the formValidator
  *
  * @param formValidator
  * @param formData
  * @returns
  */
 function testValues(formData: FormData, formValidator: Validator) {
-    const formError: IFormError = {}
+    const filteredEntries = Object.entries(formValidator)
+        .filter(
+            ([k, v]) => !v.validator.test(formData.get(k) as string)
+        )
+        .map(([k, v]) => [k, v.errorMessage])
 
-    Object.entries(formValidator)
-        .forEach(([key, value]) => {
-            const isValid = value.validator.test(formData.get(key) as string)
-            if (!isValid) {
-                formError[key] = value.errorMessage
-            }
-        })
 
-    if (Object.keys(formError).length !== 0) {
-        throw new FormError(formError, 400)
+    if (filteredEntries.length !== 0) {
+        throw new FormError(Object.fromEntries(filteredEntries), 400)
     }
 }
 
@@ -62,7 +58,7 @@ export function FormHandler(formData: FormData) {
 
             /**
              * Tests the data of the form if every value satisfies the given regex
-             * This function assumes that the form has every keys defined in the formValidator
+             * This function assumes that the form has every key defined in the formValidator
              *
              * @param formValidator
              * @returns

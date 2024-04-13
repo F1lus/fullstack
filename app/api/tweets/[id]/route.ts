@@ -4,10 +4,10 @@ import {Reply} from "@/app/lib/api/Reply"
 import {deleteTweet, getTweet, modifyTweet, retweet} from "@/app/lib/tweet/tweetDbManager"
 import {getUserFromSession} from "@/app/lib/util/SessionHandler";
 import {AppError} from "@/app/lib/api/error/AppError";
-import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 import {parseForm} from "@/app/lib/util/FormHandler";
 import {TweetParams} from "@/app/api/tweets/[id]/definitions";
 import {FormError} from "@/app/lib/api/error/FormError";
+import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 /**
  * Retrieve a tweets by ID
@@ -17,13 +17,18 @@ import {FormError} from "@/app/lib/api/error/FormError";
  * @returns
  */
 export async function GET(request: Request, {params: {id}}: TweetParams) {
-    const tweet = await getTweet(id)
+    try {
+        const user = await getUserFromSession()
+        const tweet = await getTweet(id, user.id)
 
-    if (!tweet) {
-        throw new AppError('Tweet not found!', 404)
+        if (!tweet) {
+            throw new AppError('Tweet not found!', 404)
+        }
+
+        return Reply.send({tweet})
+    } catch (error) {
+        return ErrorHandler(error)
     }
-
-    return Reply.send({tweet})
 }
 
 export async function DELETE(request: Request, {params: {id}}: TweetParams) {

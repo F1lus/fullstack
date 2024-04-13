@@ -4,7 +4,7 @@ import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(_: Request) {
+export async function GET() {
     try {
         const isLoggedIn = await isAuthorizationHeaderValid()
         return Reply.withStatus(isLoggedIn ? 200 : 401).send()

@@ -1,4 +1,3 @@
-import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 import {FormHandler, parseForm} from "@/app/lib/util/FormHandler";
 import {AUTHORIZATION, LoginForm} from "@/app/lib/definitions";
 import {AppError} from "@/app/lib/api/error/AppError";
@@ -6,11 +5,7 @@ import {createUserSession, deleteUserSession, findUserByLogin} from "@/app/lib/a
 import {createToken, decryptToken} from "@/app/lib/token/JWT";
 import {Reply} from "@/app/lib/api/Reply";
 import {cookies} from "next/headers";
-import {redirect} from "next/navigation";
-
-export async function GET() {
-    redirect('../auth/login')
-}
+import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 export async function POST(request: Request) {
     try {

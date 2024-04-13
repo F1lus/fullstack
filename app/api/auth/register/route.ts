@@ -1,4 +1,3 @@
-import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 import {FormHandler, parseForm} from "@/app/lib/util/FormHandler";
 import {RegisterForm} from "@/app/lib/definitions";
 import {AppError} from "@/app/lib/api/error/AppError";
@@ -6,6 +5,7 @@ import {FormError} from "@/app/lib/api/error/FormError";
 import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
 import {findUserByEmail, findUserByUsername, registerUser} from "@/app/lib/auth/authDbManager";
 import {Reply} from "@/app/lib/api/Reply";
+import {ErrorHandler} from "@/app/lib/util/ErrorHandler";
 
 export async function POST(request: Request) {
     try {
@@ -58,6 +58,6 @@ export async function POST(request: Request) {
         await registerUser(email, username, displayName, password)
         return Reply.send()
     } catch (error) {
-        return ErrorHandler(error)
+        return ErrorHandler(error);
     }
 }
