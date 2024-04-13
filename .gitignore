@@ -16,7 +16,7 @@
 # production
 /build
 /prisma/*.sqlite
-/prisma/schema.prisma
+/prisma/migrations
 
 # misc
 .DS_Store
