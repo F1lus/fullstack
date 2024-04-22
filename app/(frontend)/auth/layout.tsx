@@ -22,13 +22,13 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
                 exit="exit"
                 variants={variants}
                 transition={{ type: 'linear' }}
-                className="scale-75 md:row-span-2 lg:my-auto lg:scale-100"
+                className="scale-75 md:row-span-2 lg:my-auto lg:scale-100 flex justify-center"
             >
                 <Image
                     src="/images/bird.png"
                     alt="bird background"
-                    width={1280}
-                    height={720}
+                    width={500}
+                    height={250}
                     priority
                 />
             </motion.div>

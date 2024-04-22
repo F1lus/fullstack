@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         await createUserSession(user.id, token)
 
         cookies().set(AUTHORIZATION, token)
-        return Reply.send({token})
+        return Reply.send({token, id: user.id})
     } catch (error) {
         return ErrorHandler(error)
     }

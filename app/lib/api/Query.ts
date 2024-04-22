@@ -85,6 +85,14 @@ export class Query {
                     return from(response.json())
                 }),
                 switchMap(data => {
+                    if(statusCode >= 400) {
+                        return throwError(() => {
+                            const error: any = new Error()
+                            error.status = statusCode
+                            return error
+                        })
+                    }
+
                     if(data.error) {
                         return throwError(() => {
                             const error: any = new Error(data.error)

@@ -40,8 +40,9 @@ export default function LoginPage() {
         }
         setIsLoading(true)
 
-        query$(params).subscribe({
-            next: () => {
+        query$<{ id: string }>(params).subscribe({
+            next: ({ data: { id } }) => {
+                localStorage.setItem('currentUserId', id)
                 router.push('/home')
             },
             error: err => {

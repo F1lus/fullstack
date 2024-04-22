@@ -11,9 +11,9 @@ import {motion} from "framer-motion";
 
 export default function Navbar() {
 
-    const scroll = useScroll()
+    const { addHandlers } = useScroll()
 
-    const [navbarAnimation, setnavbarAnimation] = useState<{
+    const [navbarAnimation, setNavbarAnimation] = useState<{
         width: "100%" | "75%",
         top: "0" | "1rem",
         border: "rounded-full" | ""
@@ -26,14 +26,14 @@ export default function Navbar() {
     const handleScroll = () => {
         const {scrollY} = window
         if (scrollY > 10) {
-            setnavbarAnimation(prevState => ({
+            setNavbarAnimation(prevState => ({
                 ...prevState,
                 border: "",
                 width: "100%",
                 top: "0"
             }))
         } else {
-            setnavbarAnimation(prevState => ({
+            setNavbarAnimation(prevState => ({
                 ...prevState,
                 border: "rounded-full",
                 width: "75%",
@@ -43,8 +43,8 @@ export default function Navbar() {
     }
 
     useEffect(() => {
-        scroll.addHandlers(handleScroll)
-    }, [scroll])
+        addHandlers(handleScroll)
+    }, [addHandlers])
 
     return (
         <motion.div
@@ -58,13 +58,14 @@ export default function Navbar() {
                 className="w-full h-full flex items-center justify-between"
             >
                 <Link
+                    className="relative w-[64px] h-full"
                     href={"/home"}
                 >
                     <Image
                         src="/images/bird.png"
                         alt="application logo"
-                        width={64}
-                        height={64}
+                        fill
+                        sizes="(max-width: 64px), (max-height: 64px)"
                         priority
                     />
                 </Link>
