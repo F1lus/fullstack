@@ -7,7 +7,7 @@ export default function AppLayout({children}: { children: ReactNode }) {
             <div className="relative z-10">
                 <Navbar/>
             </div>
-            <div className="relative z-0">
+            <div className="relative z-0 top-[6rem]">
                 {children}
             </div>
         </div>

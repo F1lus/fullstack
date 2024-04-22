@@ -25,7 +25,8 @@ export async function POST(request: Request) {
             if (await decryptToken(user.session.token)) {
                 cookies().set(AUTHORIZATION, user.session.token)
                 return Reply.send({
-                    token: user.session.token
+                    token: user.session.token,
+                    id: user.session.id
                 })
             } else {
                 await deleteUserSession(user.id)
@@ -39,7 +40,7 @@ export async function POST(request: Request) {
         await createUserSession(user.id, token)
 
         cookies().set(AUTHORIZATION, token)
-        return Reply.send({token})
+        return Reply.send({token, id: user.id})
     } catch (error) {
         return ErrorHandler(error)
     }

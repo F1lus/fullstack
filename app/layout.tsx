@@ -22,12 +22,12 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: Readonly<{ children: ReactNode; }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className} bg-[#F0F2F5]`}>
-                <Providers>
-                    {children}
-                    <Toast/>
-                </Providers>
-            </body>
+        <body className={`${inter.className} bg-[#F0F2F5] min-h-screen`}>
+        <Providers>
+            {children}
+            <Toast/>
+        </Providers>
+        </body>
         </html>
     );
 }

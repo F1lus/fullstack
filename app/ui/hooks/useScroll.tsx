@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useCallback, useEffect, useRef} from "react";
 import {debounceTime, fromEvent, Subscription, tap} from "rxjs";
 
 export default function useScroll() {
@@ -6,13 +6,13 @@ export default function useScroll() {
     const scrollHandlers = useRef<Function>(() => {});
     const subscription = useRef<Subscription>();
 
-    const addHandlers = (handler: Function) => {
+    const addHandlers = useCallback((handler: Function) => {
         scrollHandlers.current = handler
-    }
+    }, [])
 
-    const removeHandler = () => {
+    const removeHandler = useCallback(() => {
         scrollHandlers.current = () => {}
-    }
+    }, [])
 
     useEffect(() => {
         subscription.current = fromEvent(document, 'scroll').pipe(

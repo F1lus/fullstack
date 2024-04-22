@@ -1,6 +1,6 @@
 'use server'
 
-import {type NextRequest} from "next/server";
+import {type NextRequest, NextResponse} from "next/server";
 import {Query} from "@/app/lib/api/Query";
 import {AUTHORIZATION} from "@/app/lib/definitions";
 import {lastValueFrom} from "rxjs";
@@ -43,30 +43,39 @@ export class SecurityFilter {
             )
     }
 
-    async getNextUrl() {
-        const isApi = this.url.startsWith('/api')
-        const prefix = isApi ? '/api' : ''
-        const isLoggedIn = await this.authenticate()
+    async createResponse() {
+        const isAPI = this.url.startsWith('/api')
+        const isAuthenticated = await this.authenticate()
 
-        const authPath = `${prefix}/auth`
-        const loginPath = `${authPath}/login`
+        return isAPI ?
+            this.filterAPI(isAuthenticated)
+            :
+            this.filterFrontEnd(isAuthenticated)
+    }
 
-        if(isLoggedIn && this.url.startsWith(authPath)) {
-            return new URL('/home', this.origin)
+    private async filterAPI(isAuthenticated: boolean) {
+        if(!isAuthenticated && !this.url.startsWith('/api/auth')) {
+            return NextResponse.json(null, { status: 401 })
+        }
+        return NextResponse.next()
+    }
+
+    private async filterFrontEnd(isAuthenticated: boolean) {
+        const auth = '/auth' as const
+        const login = `${auth}/login` as const
+        const home = '/home' as const
+
+        if(!isAuthenticated && !this.url.startsWith(auth)) {
+            const loginURL = new URL(login, this.origin)
+            return NextResponse.redirect(loginURL)
         }
 
-        if(!isLoggedIn && !this.url.startsWith(authPath)) {
-            return new URL(loginPath, this.origin)
+        if(isAuthenticated && this.url.startsWith(auth)) {
+            const homeURL = new URL(home, this.origin)
+            return NextResponse.redirect(homeURL)
         }
 
-        for(const path of this.filters.protectedPaths) {
-            const nextPath = `${prefix}/${path}`
-            if(isLoggedIn && this.url.startsWith(nextPath)) {
-                return new URL(nextPath, this.origin)
-            }
-        }
-
-        return null
+        return NextResponse.next()
     }
 
 }
