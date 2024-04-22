@@ -4,6 +4,8 @@ import {Dispatch, SetStateAction, useCallback, useEffect, useRef, useState} from
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
 import {ITweet} from "@/app/lib/definitions";
 import useScroll from "@/app/ui/hooks/useScroll";
+import useNotification from "@/app/ui/hooks/useNotification";
+import {NotificationType} from "@/app/ui/context/NotificationContext";
 
 export default function useTweets(): [ITweet[], Dispatch<SetStateAction<ITweet[]>>] {
 
@@ -13,8 +15,9 @@ export default function useTweets(): [ITweet[], Dispatch<SetStateAction<ITweet[]
     ] = useState<ITweet[]>([])
 
     const page = useRef(1)
+    const { setNotification } = useNotification()
     const query$ = useQuery()
-    const scroll = useScroll()
+    const { addHandlers } = useScroll()
 
     const getTweets = useCallback(() => {
         const params: IQueryParams = {
@@ -23,14 +26,22 @@ export default function useTweets(): [ITweet[], Dispatch<SetStateAction<ITweet[]
             authorized: true
         }
 
-        query$<{ tweets: ITweet[] }>(params).subscribe(({data}) => {
-            const {tweets} = data
-            if (tweets.length > 0) {
-                setAllTweets(prevState => [...prevState, ...tweets])
-                page.current++
-            }
+        query$<{ tweets: ITweet[] }>(params).subscribe({
+            next: ({data}) => {
+                const {tweets} = data
+                if (tweets.length > 0) {
+                    setAllTweets(prevState => [...prevState, ...tweets])
+                    page.current++
+                } else {
+                    setNotification({
+                        type: NotificationType.INFO,
+                        message: 'You have reached the end of the tweets!'
+                    })
+                }
+            },
+            error: () => {}
         })
-    }, [query$])
+    }, [query$, setNotification])
 
     const handleScroll = useCallback(() => {
         const bodyHeight = document.body.offsetHeight
@@ -43,10 +54,11 @@ export default function useTweets(): [ITweet[], Dispatch<SetStateAction<ITweet[]
     }, [getTweets])
 
     useEffect(() => {
-        scroll.addHandlers(() => handleScroll())
+        addHandlers(() => handleScroll())
 
         document.dispatchEvent(new Event('scroll'))
-    }, [handleScroll, scroll]);
+
+    }, [addHandlers, handleScroll]);
 
     return [allTweets, setAllTweets]
 }
