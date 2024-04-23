@@ -106,7 +106,7 @@ export default function Tweet(tweetProps: TweetProps) {
                 scale: 0.98
             }}
         >
-            <Card className="max-w-[450px]">
+            <Card className="w-[450px]">
                 <CardHeader className="justify-between">
                     <div className='flex gap-5'>
                         <Avatar

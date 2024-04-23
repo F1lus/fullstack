@@ -63,6 +63,7 @@ export async function getAllTweets(page: number = 1, userId: string) {
                     },
                     Owner: {
                         select: {
+                            id: true,
                             displayName: true,
                             name: true,
                             profilePicturePath: true,
@@ -75,6 +76,7 @@ export async function getAllTweets(page: number = 1, userId: string) {
             modifiedAt: true,
             Owner: {
                 select: {
+                    id: true,
                     displayName: true,
                     name: true,
                     profilePicturePath: true,
@@ -149,6 +151,7 @@ export async function getUserTweets(userId: string, page: number = 1) {
                     },
                     Owner: {
                         select: {
+                            id: true,
                             displayName: true,
                             name: true,
                             profilePicturePath: true,
@@ -160,6 +163,7 @@ export async function getUserTweets(userId: string, page: number = 1) {
             modifiedAt: true,
             Owner: {
                 select: {
+                    id: true,
                     displayName: true,
                     name: true,
                     profilePicturePath: true,
@@ -227,6 +231,7 @@ export async function getTweet(tweetId: string, userId: string) {
                     },
                     Owner: {
                         select: {
+                            id: true,
                             displayName: true,
                             name: true,
                             profilePicturePath: true,
@@ -238,6 +243,7 @@ export async function getTweet(tweetId: string, userId: string) {
             modifiedAt: true,
             Owner: {
                 select: {
+                    id: true,
                     displayName: true,
                     name: true,
                     profilePicturePath: true,

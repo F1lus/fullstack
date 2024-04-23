@@ -1,0 +1,1 @@
+export type ProfileParams = { params: { id: string } }

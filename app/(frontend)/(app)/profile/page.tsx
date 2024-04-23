@@ -1,6 +1,84 @@
+"use client"
+
 import {Avatar} from "@nextui-org/avatar";
+import {useCallback, useEffect, useState} from "react";
+import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
+import {ITweet} from "@/app/lib/definitions";
+import Tweet from "@/app/ui/Tweet";
+
+type ProfileData = {
+    profilePicture: string
+    name: string
+    displayName: string
+    id: string
+    description: string
+    createdAt: Date
+}
 
 export default function ProfilePage() {
+
+    const query$ = useQuery()
+
+    const [profileData, setProfileData] = useState<ProfileData>()
+    const [tweets, setTweets] = useState<ITweet[]>([])
+
+    useEffect(() => {
+        const userId = localStorage.getItem('currentUserId')
+        const profileParams: IQueryParams = {
+            URL: `/profile/${userId}`,
+            method: 'GET',
+            authorized: true
+        }
+
+        const tweetsParams: IQueryParams = {
+            URL: `/tweets?userId=${userId}`,
+            method: 'GET',
+            authorized: true
+        }
+
+        query$(profileParams).subscribe({
+            next: ({data: {profile}}) => {
+                setProfileData(profile)
+            },
+            error: err => {
+                console.error(err)
+            }
+        })
+
+        query$(tweetsParams).subscribe({
+            next: ({data: {tweets}}) => {
+                setTweets(tweets)
+            },
+            error: err => {
+                console.error(err)
+            }
+        })
+
+    }, [])
+
+    const setTweet = (index: number, tweet: ITweet) => {
+        setTweets(prevState => {
+            prevState[index] = tweet
+            return [...prevState]
+        })
+    }
+
+    const renderTweets = useCallback(() => {
+        if (tweets.length > 0) {
+            return tweets.map((tweet: ITweet, index) => {
+                return (
+                    <Tweet
+                        key={tweet.id}
+                        tweet={tweet}
+                        index={index}
+                        setTweet={setTweet}
+                    />
+                )
+            })
+        } else {
+            return <p>No tweets yet 🙁</p>
+        }
+    }, [tweets])
 
     return (
         <div
@@ -12,88 +90,26 @@ export default function ProfilePage() {
                 <Avatar
                     isBordered
                     radius='full'
-                    src="/images/bird.png"
+                    src={profileData?.profilePicture}
                     alt='ProfilePicture'
                     className="w-32 h-32 text-large"
                 />
                 <div
                     className="flex flex-col gap-2 items-center justify-center grow"
                 >
-                    <p>Istók István</p>
-                    <p>@ististi</p>
-                    <p>istok.istvan2001@gmail.com</p>
+                    <p>{profileData?.name}</p>
+                    <p>@{profileData?.displayName}</p>
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet ac urna quis
-                        gravida.
+                        {profileData?.description}
                     </p>
                 </div>
             </div>
 
 
             <div
-                className="h-full w-full bg-white p-6 rounded-xl shadow-lg flex flex-col items-center gap-5 md:row-span-2 md:overflow-y-auto"
+                className="w-full bg-white p-6 rounded-xl shadow-lg flex flex-col items-center gap-5 md:row-span-2 md:overflow-y-auto"
             >
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
-                <p>asd</p>
+                {renderTweets()}
             </div>
         </div>
     )
