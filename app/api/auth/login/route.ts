@@ -25,7 +25,8 @@ export async function POST(request: Request) {
             if (await decryptToken(user.session.token)) {
                 cookies().set(AUTHORIZATION, user.session.token)
                 return Reply.send({
-                    token: user.session.token
+                    token: user.session.token,
+                    id: user.session.id
                 })
             } else {
                 await deleteUserSession(user.id)

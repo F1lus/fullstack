@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
     return (
         <div
-            className="w-full h-full pb-[1rem] grid grid-rows-[_1fr] overflow-hidden md:grid-rows-[60vh_1fr] lg:grid-cols-3 lg:h-screen"
+            className="w-full h-full grid grid-rows-[_1fr] overflow-hidden md:grid-rows-[60vh_1fr] lg:grid-cols-3 lg:h-screen"
         >
             <motion.div
                 initial="hidden"

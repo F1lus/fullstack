@@ -65,7 +65,7 @@ export default function Navbar() {
                         src="/images/bird.png"
                         alt="application logo"
                         fill
-                        sizes="(max-width: 64px), (max-height: 64px)"
+                        sizes="(max-width: 60px), (max-height: 60px)"
                         priority
                     />
                 </Link>
