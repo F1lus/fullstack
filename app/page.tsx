@@ -1,12 +1,16 @@
-/**
- * Default Route (/)
- * 
- * Automatically rendered when the root of the page
- * is visited
- * 
- * @returns JSX
- */
+'use client'
+
+import {useRouter} from "next/navigation";
+import {useEffect} from "react";
+
 export default function Home() {
+
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace("/home")
+  }, [router]);
+
   return (
     <main></main>
   );

@@ -20,7 +20,7 @@ export default function Home() {
 
     return (
         <section
-            className="flex flex-col items-center gap-5 pt-[6rem]"
+            className="flex flex-col items-center gap-5"
         >
             {allTweets.map((tweet: ITweet, index) => {
                 return (

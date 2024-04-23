@@ -21,8 +21,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: Readonly<{ children: ReactNode; }>) {
     return (
-        <html lang="en">
-            <body className={`${inter.className} bg-[#F0F2F5]`}>
+        <html lang="en" className="bg-[#F0F2F5]">
+            <body className={`${inter.className} min-h-screen`}>
                 <Providers>
                     {children}
                     <Toast/>
