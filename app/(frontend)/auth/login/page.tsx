@@ -5,11 +5,10 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {ILoginFormError} from "@/app/lib/api/error/ApiError";
 import Link from "next/link";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUser} from "@fortawesome/free-regular-svg-icons";
 import {motion} from "framer-motion";
 import useLoading from "@/app/ui/hooks/useLoading";
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
+import {FaRegUser as UserIcon} from "react-icons/fa";
 
 const variants = {
     hidden: {opacity: 0, x: -100, y: 0},
@@ -41,7 +40,7 @@ export default function LoginPage() {
         setIsLoading(true)
 
         query$<{ id: string }>(params).subscribe({
-            next: ({ data: { id } }) => {
+            next: ({data: {id}}) => {
                 localStorage.setItem('currentUserId', id)
                 router.push('/home')
             },
@@ -62,10 +61,8 @@ export default function LoginPage() {
             variants={variants}
             transition={{type: 'easeIn'}}
         >
-            <FontAwesomeIcon
-                className="text-[5em]"
-                icon={faUser}
-            />
+
+            <UserIcon className="text-[5em]"/>
 
             <h1 className="text-4xl font-bold">Login</h1>
             <p className="text-1xl">In order to continue, please sign in!</p>
