@@ -2,16 +2,21 @@
 
 import Image from "next/image";
 import {Input} from "@nextui-org/react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUser} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import useScroll from "@/app/ui/hooks/useScroll";
 import {useEffect, useState} from "react";
 import {motion} from "framer-motion";
+import {FaRegUser as UserIcon} from "react-icons/fa";
+import {FiLogOut as LogOutIcon} from "react-icons/fi";
+import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
+import {useRouter} from "next/navigation";
 
 export default function Navbar() {
 
     const {addHandlers} = useScroll()
+    const query$ = useQuery()
+    const router = useRouter()
+    const [userId, setUserId] = useState<string | null>(null)
 
     const [navbarAnimation, setNavbarAnimation] = useState<{
         width: "100%" | "75%",
@@ -45,6 +50,25 @@ export default function Navbar() {
     useEffect(() => {
         addHandlers(handleScroll)
     }, [addHandlers])
+
+    const handleLogout = () => {
+        const params: IQueryParams = {
+            method: 'DELETE',
+            URL: '/logout',
+        }
+
+        query$(params).subscribe({
+            next: () => {
+                localStorage.removeItem('currentUserId')
+                router.push('/auth/login')
+            }
+        })
+    }
+
+    useEffect(() => {
+        const currentUserId: string | null = localStorage.getItem('currentUserId')
+        setUserId(currentUserId)
+    }, []);
 
     return (
         <motion.div
@@ -80,14 +104,17 @@ export default function Navbar() {
                     className="w-1/2 rounded-full"
                 />
 
-                <Link
-                    href={"/profile"}
-                >
-                    <FontAwesomeIcon
-                        icon={faUser}
-                        size="xl"
-                    />
-                </Link>
+                <div className="flex gap-5">
+                    <Link
+                        href={`/profile/${userId}`}
+                    >
+                        <UserIcon className="text-[1.4em]"/>
+                    </Link>
+
+                    <button onClick={handleLogout}>
+                        <LogOutIcon className="text-[1.4em] text-red-500"/>
+                    </button>
+                </div>
             </div>
         </motion.div>
     )

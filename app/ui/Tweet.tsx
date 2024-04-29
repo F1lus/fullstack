@@ -1,11 +1,11 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faComment, faHeart, faShareFromSquare} from "@fortawesome/free-regular-svg-icons";
 import type {ITweet} from "@/app/lib/definitions";
 import {useState} from "react";
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
 import {Card, CardBody, CardFooter, CardHeader} from "@nextui-org/card";
 import {Avatar} from "@nextui-org/avatar";
 import {motion} from "framer-motion";
+import {FaRegComment as CommentIcon, FaRegHeart as HeartIcon, FaRegShareSquare as ShareIcon} from "react-icons/fa";
+
 
 interface TweetProps {
     tweet: ITweet,
@@ -56,38 +56,33 @@ export default function Tweet(tweetProps: TweetProps) {
     function displayFooter() {
         if (!tweetProps.isRetweet) {
             return (
-                <CardFooter className='gap-x-20 justify-center'>
+                <CardFooter className='w-full flex justify-center gap-20'>
                     <button
-                        className="flex gap-1"
+                        className="flex"
                         onClick={handleLike}
                     >
-                        <FontAwesomeIcon
-                            className='font-semibold text-large'
-                            icon={faHeart}
-                            color={isTweetLiked ? 'red' : undefined}
-                        />
-                        <p className="font-semibold text-default-400 text-small">
+                        <HeartIcon className='font-semibold text-large' color={isTweetLiked ? 'red' : undefined}/>
+
+                        <p className="font-semibold text-default-400 text-small pl-1">
                             {tweetProps.tweet._count.likes}
                         </p>
                     </button>
+
                     <button
                         className="flex gap-1"
                     >
-                        <FontAwesomeIcon
-                            className='font-semibold text-large'
-                            icon={faComment}
-                        />
+                        <CommentIcon className='font-semibold text-large'/>
+
                         <p className="font-semibold text-default-400 text-small">
                             {tweetProps.tweet._count.comments}
                         </p>
                     </button>
+
                     <button
                         className="flex gap-1"
                     >
-                        <FontAwesomeIcon
-                            className='font-semibold text-large'
-                            icon={faShareFromSquare}
-                        />
+                        <ShareIcon className='font-semibold text-large'/>
+
                         <p className="font-semibold text-default-400 text-small">
                             {tweetProps.tweet._count.retweets}
                         </p>
@@ -106,7 +101,7 @@ export default function Tweet(tweetProps: TweetProps) {
                 scale: 0.98
             }}
         >
-            <Card className="w-[450px]">
+            <Card className={tweetProps.isRetweet ? 'w-[28rem] shadow-md' : 'w-screen lg:w-[30rem]'}>
                 <CardHeader className="justify-between">
                     <div className='flex gap-5'>
                         <Avatar

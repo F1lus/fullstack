@@ -5,6 +5,8 @@ import {useCallback, useEffect, useState} from "react";
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
 import {ITweet} from "@/app/lib/definitions";
 import Tweet from "@/app/ui/Tweet";
+import {switchMap} from "rxjs";
+import {useParams} from "next/navigation";
 
 type ProfileData = {
     profilePicture: string
@@ -22,8 +24,9 @@ export default function ProfilePage() {
     const [profileData, setProfileData] = useState<ProfileData>()
     const [tweets, setTweets] = useState<ITweet[]>([])
 
+    const userId = useParams().id
+
     useEffect(() => {
-        const userId = localStorage.getItem('currentUserId')
         const profileParams: IQueryParams = {
             URL: `/profile/${userId}`,
             method: 'GET',
@@ -36,25 +39,17 @@ export default function ProfilePage() {
             authorized: true
         }
 
-        query$(profileParams).subscribe({
-            next: ({data: {profile}}) => {
-                setProfileData(profile)
-            },
-            error: err => {
-                console.error(err)
-            }
+        query$(profileParams).pipe(
+            switchMap(({data: {profile}}) => {
+                    setProfileData(profile)
+                    return query$(tweetsParams)
+                }
+            )
+        ).subscribe(({data: {tweets}}) => {
+            setTweets(tweets)
         })
 
-        query$(tweetsParams).subscribe({
-            next: ({data: {tweets}}) => {
-                setTweets(tweets)
-            },
-            error: err => {
-                console.error(err)
-            }
-        })
-
-    }, [])
+    }, [query$])
 
     const setTweet = (index: number, tweet: ITweet) => {
         setTweets(prevState => {
