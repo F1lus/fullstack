@@ -14,7 +14,9 @@ export default function useNotification(): {
 
     const setNotification = useCallback((notification: INotification) => {
         context.setNotification(notification)
-    }, [context])
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return {
         notification: context.notification,

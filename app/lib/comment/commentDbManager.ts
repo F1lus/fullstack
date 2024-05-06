@@ -26,3 +26,25 @@ export function getAllCommentsForTweet(tweetId: string) {
         }
     })
 }
+
+export function createComment(tweetId: string, userId: string, text: string) {
+    return GlobalPrisma.comment.create({
+        data: {
+            text,
+            tweetId,
+            userId
+        }
+    })
+}
+
+export function updateComment(commentId: string, userId: string, text: string) {
+    return GlobalPrisma.comment.update({
+        data: {
+            text
+        },
+        where: {
+            id: commentId,
+            userId
+        }
+    })
+}

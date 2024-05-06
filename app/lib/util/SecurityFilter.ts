@@ -55,7 +55,7 @@ export class SecurityFilter {
 
     private async filterAPI(isAuthenticated: boolean) {
         if(!isAuthenticated && !this.url.startsWith('/api/auth')) {
-            return NextResponse.json(null, { status: 401 })
+            return NextResponse.json("Access Denied!", { status: 401 })
         }
         return NextResponse.next()
     }
