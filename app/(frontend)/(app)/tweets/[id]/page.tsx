@@ -4,7 +4,8 @@ import {useParams} from "next/navigation";
 import {useCallback} from "react";
 import {motion} from "framer-motion";
 import {ITweet} from "@/app/lib/definitions";
-import Tweet from "@/app/ui/Tweet";
+import Tweet from "@/app/ui/tweet/Tweet";
+import Comment from "@/app/ui/tweet/Comment";
 import useFetchTweet from "@/app/ui/hooks/useFetchTweet";
 
 export default function TweetPage() {
@@ -19,18 +20,21 @@ export default function TweetPage() {
     const renderTweet = useCallback(() => {
         if (tweet) {
             return (
-                <Tweet
-                    tweet={tweet}
-                    index={0}
-                    setTweet={modifyTweet}
-                />
+                <div className="flex flex-col gap-5 items-center">
+                    <Tweet
+                        tweet={tweet}
+                        index={0}
+                        setTweet={modifyTweet}
+                    />
+                    <Comment tweet={tweet} setTweet={setTweet}/>
+                </div>
             )
         }
-    }, [modifyTweet, tweet])
+    }, [modifyTweet, setTweet, tweet])
 
     return (
         <motion.div>
-            { renderTweet() }
+            {renderTweet()}
         </motion.div>
     )
 }

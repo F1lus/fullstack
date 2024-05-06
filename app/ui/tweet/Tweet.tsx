@@ -101,7 +101,7 @@ export default function Tweet(tweetProps: TweetProps) {
                 scale: 0.98
             }}
         >
-            <Card className={tweetProps.isRetweet ? 'w-[28rem] shadow-md' : 'w-screen lg:w-[30rem]'}>
+            <Card className={tweetProps.isRetweet ? 'w-[99%] shadow-md mx-auto' : 'w-screen lg:w-[30rem]'}>
                 <CardHeader className="justify-between">
                     <div className='flex gap-5'>
                         <Avatar

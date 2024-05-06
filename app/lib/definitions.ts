@@ -105,3 +105,23 @@ export type ProfileData = {
 }
 
 // #endregion Profile
+
+// #region Comment
+
+export type IComment = {
+    id: string,
+    text: string,
+    createdAt: Date,
+    modifiedAt: Date,
+    Owner: {
+        id: string,
+        name: string,
+        displayName: string,
+        profilePicturePath: string
+    },
+    _count: {
+        likes: number
+    }
+}
+
+// #endregion Comment

@@ -1,6 +1,6 @@
 "use client"
 
-import Tweet from "@/app/ui/Tweet";
+import Tweet from "@/app/ui/tweet/Tweet";
 import type {ITweet} from "@/app/lib/definitions";
 import useTweets from "@/app/ui/hooks/useTweets";
 
