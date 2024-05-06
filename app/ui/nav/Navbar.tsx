@@ -16,6 +16,7 @@ export default function Navbar() {
     const {addHandlers} = useScroll()
     const query$ = useQuery()
     const router = useRouter()
+    const [userId, setUserId] = useState<string | null>(null)
 
     const [navbarAnimation, setNavbarAnimation] = useState<{
         width: "100%" | "75%",
@@ -64,9 +65,14 @@ export default function Navbar() {
         })
     }
 
+    useEffect(() => {
+        const currentUserId: string | null = localStorage.getItem('currentUserId')
+        setUserId(currentUserId)
+    }, []);
+
     return (
         <motion.div
-            className={`h-[4rem] px-10 fixed left-1/2 -translate-x-[50%] bg-white ${navbarAnimation.border} shadow-lg`}
+            className={`h-[4rem] px-10 py-1 fixed left-1/2 -translate-x-[50%] bg-white ${navbarAnimation.border} shadow-lg`}
             animate={{
                 width: navbarAnimation.width,
                 top: navbarAnimation.top,
@@ -100,7 +106,7 @@ export default function Navbar() {
 
                 <div className="flex gap-5">
                     <Link
-                        href={"/profile"}
+                        href={`/profile/${userId}`}
                     >
                         <UserIcon className="text-[1.4em]"/>
                     </Link>
