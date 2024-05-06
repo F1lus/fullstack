@@ -30,7 +30,7 @@ export default function TweetPage() {
 
     return (
         <motion.div>
-            {renderTweet()}
+            { renderTweet() }
         </motion.div>
     )
 }
