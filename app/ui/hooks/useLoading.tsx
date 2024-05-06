@@ -1,16 +1,22 @@
-import {Dispatch, SetStateAction, useContext} from "react";
+import {useCallback, useContext} from "react";
 import {LoadingContext} from "@/app/ui/context/LoadingContext";
 
 export default function useLoading(): [
-    errorState: boolean,
-    setError: Dispatch<SetStateAction<boolean>>
+    isLoading: boolean,
+    setIsLoading: (isLoading: boolean) => void
 ] {
 
     const context = useContext(LoadingContext)
 
     if (!context) {
-        throw new Error('The useLoading hook must be inside an NotificationContext Provider!')
+        throw new Error('The useLoading hook must be inside an LoadingContext Provider!')
     }
 
-    return [context.isLoading, context.setIsLoading]
+    const setIsLoading = useCallback((isLoading: boolean) => {
+        context.setIsLoading(isLoading)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    return [context.isLoading, setIsLoading]
 }
