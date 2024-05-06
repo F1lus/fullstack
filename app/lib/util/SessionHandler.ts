@@ -6,7 +6,7 @@ import {deleteUserSession, getUserById, getUserSession} from "../auth/authDbMana
 import {AUTHORIZATION, SessionCookie} from "../definitions"
 import {AppError} from "@/app/lib/api/error/AppError";
 
-async function destroySession(userId: string) {
+export async function destroySession(userId: string) {
     cookies().delete(AUTHORIZATION)
     await deleteUserSession(userId)
 }
