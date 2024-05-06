@@ -7,11 +7,11 @@ import Link from "next/link";
 import {motion} from "framer-motion";
 import useLoading from "@/app/ui/hooks/useLoading";
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
-import {faAddressCard} from "@fortawesome/free-regular-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
 import useNotification from "@/app/ui/hooks/useNotification";
 import {NotificationType} from "@/app/ui/context/NotificationContext";
+import {FaRegAddressCard} from "react-icons/fa";
+
 
 const variants = {
     hidden: {opacity: 0, x: -100, y: 0},
@@ -78,7 +78,7 @@ export default function RegisterPage() {
             transition={{type: 'linear'}}
         >
 
-            <FontAwesomeIcon icon={faAddressCard} className='text-[5em]'/>
+            <FaRegAddressCard className='text-[5em]'/>
 
             <h1
                 className="text-4xl font-bold"
