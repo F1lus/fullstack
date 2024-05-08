@@ -3,19 +3,10 @@
 import {Avatar} from "@nextui-org/avatar";
 import {useCallback, useEffect, useState} from "react";
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
-import {ITweet} from "@/app/lib/definitions";
+import {ITweet, ProfileData} from "@/app/lib/definitions";
 import Tweet from "@/app/ui/Tweet";
 import {switchMap} from "rxjs";
 import {useParams} from "next/navigation";
-
-type ProfileData = {
-    profilePicture: string
-    name: string
-    displayName: string
-    id: string
-    description: string
-    createdAt: Date
-}
 
 export default function ProfilePage() {
 
@@ -49,7 +40,7 @@ export default function ProfilePage() {
             setTweets(tweets)
         })
 
-    }, [query$])
+    }, [query$, userId])
 
     const setTweet = (index: number, tweet: ITweet) => {
         setTweets(prevState => {
@@ -102,7 +93,7 @@ export default function ProfilePage() {
 
 
             <div
-                className="w-full bg-white p-6 rounded-xl shadow-lg flex flex-col items-center gap-5 md:row-span-2 md:overflow-y-auto"
+                className="h-full w-full bg-white p-6 rounded-xl shadow-lg flex flex-col items-center gap-5 md:row-span-2 md:overflow-y-auto"
             >
                 {renderTweets()}
             </div>
