@@ -61,20 +61,20 @@ export const RegisterForm = Object.freeze({
 
 // #endregion Register
 
-// region Session
+// #region Session
 
 export type SessionCookie = {
     id: string
 }
 
-// endregion Session
+// #endregion Session
 
-// region Tweet
+// #region Tweet
 
 export type ITweet = {
     id: string,
     description: string,
-    likes: {id: string}[],
+    likes: { id: string }[],
     createdAt: Date,
     modifiedAt: Date,
     _count: {
@@ -91,4 +91,17 @@ export type ITweet = {
     originalTweet?: ITweet
 }
 
-// endregion Tweet
+// #endregion Tweet
+
+// #region Profile
+
+export type ProfileData = {
+    profilePicture: string
+    name: string
+    displayName: string
+    id: string
+    description: string
+    createdAt: Date
+}
+
+// #endregion Profile

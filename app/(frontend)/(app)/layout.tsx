@@ -4,6 +4,7 @@ import {ReactNode} from "react";
 import Navbar from "@/app/ui/nav/Navbar";
 import {Button} from "@nextui-org/react";
 import {motion} from "framer-motion";
+import Link from "next/link";
 
 export default function AppLayout({children}: { children: ReactNode }) {
     return (
@@ -16,19 +17,23 @@ export default function AppLayout({children}: { children: ReactNode }) {
             </div>
             <motion.div
                 className="fixed z-10 bottom-10 left-10"
-                whileHover={{ scale: 1.1 }}
+                whileHover={{scale: 1.1}}
             >
-                <Button
-                    isIconOnly
-                    className={`
+                <Link
+                    href="/tweets/create"
+                >
+                    <Button
+                        isIconOnly
+                        className={`
                         rounded-full font-bold text-2xl 
                         shadow-lg p-8 bg-gradient-to-t 
                         from-sky-400 to-emerald-300
                         text-gray-600
                     `}
-                >
-                    +
-                </Button>
+                    >
+                        +
+                    </Button>
+                </Link>
             </motion.div>
         </section>
     )
