@@ -33,6 +33,21 @@ export function createComment(tweetId: string, userId: string, text: string) {
             text,
             tweetId,
             userId
+        },
+        include: {
+            Owner: {
+                select: {
+                    id: true,
+                    name: true,
+                    displayName: true,
+                    profilePicturePath: true,
+                }
+            },
+            _count: {
+                select: {
+                    likes: true
+                }
+            }
         }
     })
 }

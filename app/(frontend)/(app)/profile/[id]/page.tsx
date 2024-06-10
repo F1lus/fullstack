@@ -4,7 +4,7 @@ import {Avatar} from "@nextui-org/avatar";
 import {useCallback, useEffect, useState} from "react";
 import useQuery, {IQueryParams} from "@/app/ui/hooks/useQuery";
 import {ITweet, ProfileData} from "@/app/lib/definitions";
-import Tweet from "@/app/ui/Tweet";
+import Tweet from "@/app/ui/tweet/Tweet";
 import {switchMap} from "rxjs";
 import {useParams} from "next/navigation";
 

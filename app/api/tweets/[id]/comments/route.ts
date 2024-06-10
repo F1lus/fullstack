@@ -5,28 +5,28 @@ import {Reply} from "@/app/lib/api/Reply";
 import {parseForm} from "@/app/lib/util/FormHandler";
 import {getUserFromSession} from "@/app/lib/util/SessionHandler";
 
-export async function GET(request: Request, { params: { id } }: TweetParams) {
+export async function GET(request: Request, {params: {id}}: TweetParams) {
     try {
         const comments = await getAllCommentsForTweet(id)
-        if(!comments) {
-            return Reply.send({ comments: [] })
+        if (!comments) {
+            return Reply.send({comments: []})
         }
 
-        return Reply.send({ comments })
+        return Reply.send({comments})
     } catch (error) {
         return ErrorHandler(error)
     }
 }
 
-export async function POST(request: Request, { params: { id } }: TweetParams) {
+export async function POST(request: Request, {params: {id}}: TweetParams) {
     try {
         const formData = await parseForm(request)
         const user = await getUserFromSession()
         const text = formData.get('text') as string
 
-        await createComment(id, user.id, text)
+        const res = await createComment(id, user.id, text)
 
-        return Reply.send()
+        return Reply.send(res)
     } catch (error) {
         return ErrorHandler(error)
     }
