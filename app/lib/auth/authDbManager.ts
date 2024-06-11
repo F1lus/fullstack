@@ -71,6 +71,20 @@ export async function findUserByEmail(email: string) {
     });
 }
 
+export async function findOtherUserByEmail(email: string, userId: string) {
+    return GlobalPrisma.user.findUnique({
+        select: {
+            id: true
+        },
+        where: {
+            email,
+            NOT: {
+                id: userId
+            }
+        }
+    });
+}
+
 /**
  * Finds a unique user by its username
  *
@@ -146,6 +160,12 @@ export async function deleteUserSession(userId: string) {
     });
 }
 
+/**
+ * Retrieves a user by its id
+ *
+ * @param userId
+ * @returns user id
+ */
 export async function getUserById(userId: string) {
     try {
         return await GlobalPrisma.user.findUniqueOrThrow({

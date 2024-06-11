@@ -7,6 +7,9 @@ import {ITweet, ProfileData} from "@/app/lib/definitions";
 import Tweet from "@/app/ui/tweet/Tweet";
 import {switchMap} from "rxjs";
 import {useParams} from "next/navigation";
+import {FaUserEdit as EditIcon} from "react-icons/fa";
+import Link from "next/link";
+import {Button} from "@nextui-org/react";
 
 export default function ProfilePage() {
 
@@ -68,7 +71,7 @@ export default function ProfilePage() {
 
     return (
         <div
-            className="w-full grid grid-rows-[60vh_1fr] gap-5 items-start lg:grid lg:grid-cols-[25vw_1fr] lg:h-[calc(100vh-6rem)]"
+            className="w-full grid grid-rows-[40vh_1fr] gap-5 items-start lg:grid lg:grid-cols-[25vw_1fr] lg:h-[calc(100vh-6rem)]"
         >
             <div
                 className="h-full bg-white p-6 rounded-xl shadow-lg flex flex-col items-center"
@@ -76,7 +79,7 @@ export default function ProfilePage() {
                 <Avatar
                     isBordered
                     radius='full'
-                    src={profileData?.profilePicture}
+                    src={profileData?.profilePicturePath}
                     alt='ProfilePicture'
                     className="w-32 h-32 text-large"
                 />
@@ -89,6 +92,13 @@ export default function ProfilePage() {
                         {profileData?.description}
                     </p>
                 </div>
+
+                <Link href="/profile/edit">
+                    <Button variant="faded">
+                        <EditIcon className="text-[2em]"/>
+                        Edit profile
+                    </Button>
+                </Link>
             </div>
 
 

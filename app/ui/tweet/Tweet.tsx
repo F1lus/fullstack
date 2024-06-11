@@ -5,6 +5,7 @@ import {Card, CardBody, CardFooter, CardHeader} from "@nextui-org/card";
 import {Avatar} from "@nextui-org/avatar";
 import {motion} from "framer-motion";
 import {FaRegComment as CommentIcon, FaRegHeart as HeartIcon, FaRegShareSquare as ShareIcon} from "react-icons/fa";
+import Link from "next/link";
 
 
 interface TweetProps {
@@ -71,7 +72,9 @@ export default function Tweet(tweetProps: TweetProps) {
                     <button
                         className="flex gap-1"
                     >
-                        <CommentIcon className='font-semibold text-large'/>
+                        <Link href={`/tweets/${tweetProps.tweet.id}`}>
+                            <CommentIcon className='font-semibold text-large'/>
+                        </Link>
 
                         <p className="font-semibold text-default-400 text-small">
                             {tweetProps.tweet._count.comments}
@@ -103,7 +106,7 @@ export default function Tweet(tweetProps: TweetProps) {
         >
             <Card className={tweetProps.isRetweet ? 'w-[99%] shadow-md mx-auto' : 'w-screen lg:w-[30rem]'}>
                 <CardHeader className="justify-between">
-                    <div className='flex gap-5'>
+                    <Link className='flex gap-5' href={`/profile/${tweetProps.tweet.Owner.id}`}>
                         <Avatar
                             isBordered
                             radius='full'
@@ -119,7 +122,7 @@ export default function Tweet(tweetProps: TweetProps) {
                                 @{tweetProps.tweet.Owner.name}
                             </h5>
                         </div>
-                    </div>
+                    </Link>
                     <div>
                         {(new Date(tweetProps.tweet.createdAt)).toDateString()}
                     </div>

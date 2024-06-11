@@ -71,7 +71,7 @@ export default function CreateTweetPage() {
                     isBordered
                     radius='full'
                     size='md'
-                    src={profileData?.profilePicture}
+                    src={profileData?.profilePicturePath}
                     alt='ProfilePicture'
                 />
                 <div className="flex flex-col gap-1 items-start justify-center">
