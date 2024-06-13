@@ -6,5 +6,5 @@ export function ErrorHandler(error: any) {
         return error.sendError()
     }
 
-    return Reply.withStatus(400).error("Request could not be processed!")
+    return Reply.withStatus(500).error("Request could not be processed!")
 }

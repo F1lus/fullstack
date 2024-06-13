@@ -42,7 +42,7 @@ export const RegisterForm = Object.freeze({
         validator: UsernameValidator
     },
     displayName: {
-        errorMessage: 'The display name\'s length must be between 3 and 50',
+        errorMessage: 'The display name\'s length must be minimum 3 characters',
         validator: /^.{3,}/
     },
     password: {
@@ -83,6 +83,7 @@ export type ITweet = {
         likes: number
     },
     Owner: {
+        id: string,
         name: string,
         displayName: string,
         profilePicturePath: string,
@@ -96,13 +97,45 @@ export type ITweet = {
 // #region Profile
 
 export type ProfileData = {
-    profilePicture: string
+    profilePicturePath: string
     name: string
     displayName: string
     id: string
     description: string
     createdAt: Date
 }
+
+export type Email = {
+    email: string
+}
+
+export const ProfileForm = Object.freeze({
+    displayName: {
+        errorMessage: "The display name's length must be minimum 3 characters",
+        validator: /^.{3,}/
+    },
+    newEmail: {
+        errorMessage: 'The email format is invalid',
+        validator: EmailValidator
+    },
+    description: {
+        errorMessage: "The description's length must be minimum 0 characters",
+        validator: /^.*/
+    },
+    newPassword: {
+        errorMessage: 'The password format is incorrect',
+        validator: /^((?=.*[0-9])(?=.*[!@#$%^&*_+\-\\()\[\]/'",.:?=])[a-zA-Z0-9!@#$%^&*_+\-\\()\[\]/'",.:?=]{8,16}|)$/
+    },
+    passwordRepeat: {
+        errorMessage: 'The password repeat format is incorrect',
+        validator: /^((?=.*[0-9])(?=.*[!@#$%^&*_+\-\\()\[\]/'",.:?=])[a-zA-Z0-9!@#$%^&*_+\-\\()\[\]/'",.:?=]{8,16}|)$/
+    },
+    profilePicture: {
+        errorMessage: 'The profile picture format is incorrect',
+        validator: /^.*/
+
+    }
+} satisfies Validator)
 
 // #endregion Profile
 

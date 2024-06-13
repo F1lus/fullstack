@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image";
-import {Input} from "@nextui-org/react";
 import Link from "next/link";
 import useScroll from "@/app/ui/hooks/useScroll";
 import {useEffect, useState} from "react";
@@ -93,16 +92,6 @@ export default function Navbar() {
                         priority
                     />
                 </Link>
-
-                <Input
-                    type="text"
-                    placeholder="Search"
-                    variant="bordered"
-                    radius="full"
-                    size="sm"
-
-                    className="w-1/2 rounded-full"
-                />
 
                 <div className="flex gap-5">
                     <Link
