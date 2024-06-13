@@ -1,5 +1,6 @@
 import {GlobalPrisma} from "@/app/lib/GlobalPrisma";
 import {AppError} from "@/app/lib/api/error/AppError";
+import {SHA256} from "crypto-js";
 
 export function getProfileInfo(userId: string) {
     try {
@@ -43,14 +44,6 @@ export function getProfileData(userId: string) {
     }
 }
 
-interface ProfileProps {
-    id: string,
-    userId: string,
-    profilePicturePath?: string,
-    description?: string,
-
-}
-
 export function updateProfile(
     userId: string,
     profilePicturePath: string,
@@ -58,6 +51,7 @@ export function updateProfile(
     email: string,
     description: string | null,
     password: string,
+    newPassword: string,
 ) {
 
     return GlobalPrisma.user.update({
@@ -66,7 +60,7 @@ export function updateProfile(
             email,
             description,
             profilePicturePath,
-            password,
+            password: newPassword.length > 0 ? SHA256(newPassword).toString() : password,
         },
         where: {
             id: userId

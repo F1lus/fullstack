@@ -9,7 +9,6 @@ import {IRegisterFormError} from "@/app/lib/api/error/ApiError";
 import {findOtherUserByEmail} from "@/app/lib/auth/authDbManager";
 import {Reply} from "@/app/lib/api/Reply";
 import {getProfileData, updateProfile} from "@/app/lib/profile/profileDbManager";
-import {SHA256} from "crypto-js";
 import * as fs from "node:fs";
 
 export async function PATCH(request: Request) {
@@ -68,14 +67,14 @@ export async function PATCH(request: Request) {
             }
         }
 
-        const hash = newPassword ? SHA256(newPassword) : profileData.password
         await updateProfile(
             user.id,
             file.size > 0 ? path : '/profile_ph.webp',
             displayName ?? profileData.displayName,
             newEmail ?? profileData.email,
             description ?? profileData.description,
-            hash.toString()
+            profileData.password,
+            newPassword
         )
         return Reply.send()
 
@@ -85,7 +84,7 @@ export async function PATCH(request: Request) {
     }
 }
 
-export async function GET(request: Request) {
+export async function GET(_: Request) {
     try {
         const {id} = await getUserFromSession()
         const profile = await getProfileData(id)
