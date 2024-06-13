@@ -56,7 +56,9 @@ export async function PATCH(request: Request) {
             if (file.type.includes('image')) {
                 const arrayBuffer = await file.arrayBuffer();
                 const buffer = new Uint8Array(arrayBuffer);
+                console.log('a')
                 fs.writeFileSync(`public${path}`, buffer);
+                console.log('b')
             } else {
                 throw new FormError<IRegisterFormError>(
                     {
