@@ -57,7 +57,7 @@ export async function PATCH(request: Request) {
                 const arrayBuffer = await file.arrayBuffer();
                 const buffer = new Uint8Array(arrayBuffer);
                 console.log('a')
-                fs.writeFileSync(`public${path}`, buffer);
+                fs.writeFileSync(`${path}`, buffer);
                 console.log('b')
             } else {
                 throw new FormError<IRegisterFormError>(
